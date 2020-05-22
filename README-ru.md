@@ -94,36 +94,38 @@ cd digital_video_introduction
 Мы назовем каждую точку на етой матрицы **пикселем** (елемент изображения). Один пиксел отражает **интенсивность** (обычно числовое значение) данного цвета. Например, **красний пиксель** имеет 0 зеленого, 0 синего, и максимально красного. **Розовый пиксель** состоит из комбинации трех цветов - **Красный=255, Зеленый=192, Синиий=203**.
 
 > #### Other ways to encode a color image
-> Many other possible models may be used to represent the colors that make up an image. We could, for instance, use an indexed palette where we'd only need a single byte to represent each pixel instead of the 3 needed when using the RGB model. In such a model we could use a 2D matrix instead of a 3D matrix to represent our color, this would save on memory but yield fewer color options.
+> Существует множество моделий которые описовают как расппределяються цвета на изображение. Например, в место трех битов, как для модели RGB (КЗС) мы можем изпользовать только один бит. Ето использует меньше памяати но так же дает меньшые количество цветов.
+
 >
-> ![NES palette](/i/nes-color-palette.png "NES palette")
+> ![сбор цветов приставки NES](/i/nes-color-palette.png "сбор цветов приставки NES")
 
-For instance, look at the picture down below. The first face is fully colored. The others are the red, green, and blue planes (shown as gray tones).
+На изображение снизу, первый снимок отражает все цветовые каналы. Остальные снимки только отражаяют красный, зеленый и синий канал.
 
-![RGB channels intensity](/i/rgb_channels_intensity.png "RGB channels intensity")
+![Интенсивность RGB каналов](/i/rgb_channels_intensity.png "Интенсивность RGB каналовintensity")
 
-We can see that the **red color** will be the one that **contributes more** (the brightest parts in the second face) to the final color while the **blue color** contribution can be mostly **only seen in Mario's eyes** (last face) and part of his clothes, see how **all planes contribute less** (darkest parts) to the **Mario's mustache**.
+Мы видем что **красний канал** будет самым ярким (белые части второго лица), и способствует главному оттенку в картинке. **Синего** мало, и видно в четвертой картинке что он **сконцентрирован в глазах и одежды** Марио. Так же видно что все каналы мало способствуют усам, самым темным частям картинки.
 
-And each color intensity requires a certain amount of bits, this quantity is known as **bit depth**. Let's say we spend **8 bits** (accepting values from 0 to 255) per color (plane), therefore we have a **color depth** of **24 bits** (8 bits * 3 planes R/G/B), and we can also infer that we could use 2 to the power of 24 different colors.
+У каждого канала опредиленное каличество битов, так называема **битовая глубина**. Если у нас **8 битов** (между 0 и 255и) для каждего цвета, то битовая глубина у изображений RGB (8 бит * 3 цвета) в размере **24 бита**, то есть 2^24 разных цвета.
 
-> **It's great** to learn [how an image is captured from the world to the bits](http://www.cambridgeincolour.com/tutorials/camera-sensors.htm).
+> **Хорошо знать** [как озпбражения переводятся с настоящего мира в биты](http://www.cambridgeincolour.com/tutorials/camera-sensors.htm).
 
-Another property of an image is the **resolution**, which is the number of pixels in one dimension. It is often presented as width × height, for example, the **4×4** image below.
+Другая чарактеристика изображений ето **разрешение**, то есть каличество пикселей в одном измерение. Обычно оно показываетсья в формате шырина х высота, как на **4х4** картинке снизу.
 
-![image resolution](/i/resolution.png "image resolution")
+![Разрешение изображения](/i/resolution.png "Разрешение изображения")
 
-> #### Hands-on: play around with image and color
-> You can [play around with image and colors](/image_as_3d_array.ipynb) using [jupyter](#how-to-use-jupyter) (python, numpy, matplotlib and etc).
+> #### Практика
+> Можно [играца с цветами в картинках](/image_as_3d_array.ipynb) используя [jupyter](#how-to-use-jupyter) (python, numpy, matplotlib и т.д).
 >
-> You can also learn [how image filters (edge detection, sharpen, blur...) work](/filters_are_easy.ipynb).
+> Так же можшно понять [как фильтры, (обострение, размытость...) работают](/filters_are_easy.ipynb).
 
-Another property we can see while working with images or video is the **aspect ratio** which simply describes the proportional relationship between width and height of an image or pixel.
+Еще качество с которым мы встречаемся пре работе с видео и изображениями это **соотношение сторон** которое просто описовает пропорции ширины сранвнительно высоты изображения или пикселя.
 
-When people says this movie or picture is **16x9** they usually are referring to the **Display Aspect Ratio (DAR)**, however we also can have different shapes of individual pixels, we call this **Pixel Aspect Ratio (PAR)**.
+Когда луди говорят что изображение или филъм **16х9**, они называют цифры **DAR (Соотношение сторон дисплея)**
+When people says this movie or picture is **16x9** they usually are referring to the **Display Aspect Ratio (DAR)**. Так же и бывает **PAR (Соотношение сторон пикселя)**
 
-![display aspect ratio](/i/DAR.png "display aspect ratio")
+![DAR](/i/DAR.png "DAR")
 
-![pixel aspect ratio](/i/PAR.png "pixel aspect ratio")
+![PAR](/i/PAR.png "PAR")
 
 > #### DVD is DAR 4:3
 > Although the real resolution of a DVD is 704x480 it still keeps a 4:3 aspect ratio because it has a PAR of 10:11 (704x10/480x11)
