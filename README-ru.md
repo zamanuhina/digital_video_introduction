@@ -83,15 +83,15 @@ cd digital_video_introduction
 - [Конференции](#conferences)
 - [Ссылки](#references)
 
-# Basic terminology
+# Основные термины
 
-An **image** can be thought of as a **2D matrix**. If we think about **colors**, we can extrapolate this idea seeing this image as a **3D matrix** where the **additional dimensions** are used to provide **color data**.
+**Изображение** можно предстовлять в форме **2Д матрицы**. Если мы думаем о **цветах**, то можно екстропалировать это представлиние в **3Д матрицу**, где **добавочные измерения** показывают **цветную информацию**.
 
-If we chose to represent these colors using the [primary colors (red, green and blue)](https://en.wikipedia.org/wiki/Primary_color), we define three planes: the first one for **red**, the second for **green**, and the last one for the **blue** color.
+Если мы представляем ети цвета [первичными цветами (красный, зеленый, синий](https://en.wikipedia.org/wiki/Primary_color), мы определяем три уровня, один для **красного**, один для **зеленого**, и последний для **синего**.
 
-![an image is a 3d matrix RGB](/i/image_3d_matrix_rgb.png "An image is a 3D matrix")
+![изображение это 3Д матрица](/i/image_3d_matrix_rgb.png "Изображение это 3Д матрица")
 
-We'll call each point in this matrix **a pixel** (picture element). One pixel represents the **intensity** (usually a numeric value) of a given color. For example, a **red pixel** means 0 of green, 0 of blue and maximum of red. The **pink color pixel** can be formed with a combination of the three colors. Using a representative numeric range from 0 to 255, the pink pixel is defined by **Red=255, Green=192 and Blue=203**.
+Мы назовем каждую точку на етой матрицы **пикселем** (елемент изображения). Один пиксел отражает **интенсивность** (обычно числовое значение) данного цвета. Например, **красний пиксель** имеет 0 зеленого, 0 синего, и максимально красного. **Розовый пиксель** состоит из комбинации трех цветов - **Красный=255, Зеленый=192, Синиий=203**.
 
 > #### Other ways to encode a color image
 > Many other possible models may be used to represent the colors that make up an image. We could, for instance, use an indexed palette where we'd only need a single byte to represent each pixel instead of the 3 needed when using the RGB model. In such a model we could use a 2D matrix instead of a 3D matrix to represent our color, this would save on memory but yield fewer color options.
