@@ -94,7 +94,7 @@ cd digital_video_introduction
 Мы назовем каждую точку на етой матрицы **пикселем** (елемент изображения). Один пиксел отражает **интенсивность** (обычно числовое значение) данного цвета. Например, **красний пиксель** имеет 0 зеленого, 0 синего, и максимально красного. **Розовый пиксель** состоит из комбинации трех цветов - **Красный=255, Зеленый=192, Синиий=203**.
 
 > #### Other ways to encode a color image
-> Существует множество моделий которые описовают как расппределяються цвета на изображение. Например, в место трех битов, как для модели RGB (КЗС) мы можем изпользовать только один бит. Ето использует меньше памяати но так же дает меньшые количество цветов.
+> Существует множество моделий которые описовают как расппределяються цвета на изображение. Например, в место трех битов, как для модели RGB (Красный, Зеленый, Синий) мы можем изпользовать только один бит. Ето использует меньше памяати но так же дает меньшые количество цветов.
 
 >
 > ![сбор цветов приставки NES](/i/nes-color-palette.png "сбор цветов приставки NES")
@@ -118,44 +118,44 @@ cd digital_video_introduction
 >
 > Так же можшно понять [как фильтры, (обострение, размытость...) работают](/filters_are_easy.ipynb).
 
-Еще качество с которым мы встречаемся пре работе с видео и изображениями это **соотношение сторон** которое просто описовает пропорции ширины сранвнительно высоты изображения или пикселя.
+Еще качество с которым мы встречаемся пре работе с видео и изображениями это **соотношение сторон (AR)** которое просто описовает пропорции ширины сранвнительно с высотой изображения или пикселя.
 
-Когда луди говорят что изображение или филъм **16х9**, они называют цифры **DAR (Соотношение сторон дисплея)**
-When people says this movie or picture is **16x9** they usually are referring to the **Display Aspect Ratio (DAR)**. Так же и бывает **PAR (Соотношение сторон пикселя)**
+Когда луди говорят что изображение или филъм **16х9**, они называют цифры **DAR (Соотношение сторон дисплея)**. Так же и бывает **PAR (Соотношение сторон пикселя)**
 
 ![DAR](/i/DAR.png "DAR")
 
 ![PAR](/i/PAR.png "PAR")
 
 > #### DVD is DAR 4:3
-> Although the real resolution of a DVD is 704x480 it still keeps a 4:3 aspect ratio because it has a PAR of 10:11 (704x10/480x11)
+> 
+> Хоть у DVD разрешение 704х480, формат все равно соблюдает DAR 4:3 потому что у него PAR 10:11 (703x10/480x11)
 
-Finally, we can define a **video** as a **succession of *n* frames** in **time** which can be seen as another dimension, *n* is the frame rate or frames per second (FPS).
+И конечно, "видео" мы опредиляем как **последствие *n*-кадров** во **времини**, что можно обозначить как дополнительное измерение поверху размера и цвета, где *п* это колучество кадров в секунду (FPS).
 
-![video](/i/video.png "video")
+![видео](/i/video.png "видео")
 
-The number of bits per second needed to show a video is its **bit rate**.
+**битрейт** это сколько нужно битов что бы показать секунду видео.
 
-> bit rate = width * height * bit depth * frames per second
+> битрейт = ширина * высота * битовая глубина * кадры в секунду
 
-For example, a video with 30 frames per second, 24 bits per pixel, resolution of 480x240 will need **82,944,000 bits per second** or 82.944 Mbps (30x480x240x24) if we don't employ any kind of compression.
+Например, видео корое 30 FPS, 24 бита на пиксел, с разрешением 480х240 использует **82,944,000 битов в секунду** или 82 мегабита/с (30*480х240х24) без компрессии/снижения качества.
 
-When the **bit rate** is nearly constant it's called constant bit rate (**CBR**) but it also can vary then called variable bit rate (**VBR**).
+Когда **бит рейт** постоянный то его называют постоянным битрейтом (**CBR**), когда он меняетсья со времинем тогда это переменный битрейт (**VBR**).
 
-> This graph shows a constrained VBR which doesn't spend too many bits while the frame is black.
+> Этот график показывает ограниченный VBR, который не тратит слишком много битов на черные кадры.
 >
-> ![constrained vbr](/i/vbr.png "constrained vbr")
+> ![ограниченный VBR](/i/vbr.png "ограниченный VBR")
 
-In the early days, engineers came up with a technique for doubling the perceived frame rate of a video display **without consuming extra bandwidth**. This technique is known as **interlaced video**; it basically sends half of the screen in 1 "frame" and the other half in the next "frame".
+Раньше, енжинеры предумали технику што бы увеличить воспринятый FPS в два раза при этом не **не увеличевыя битрейт**. Эта техника называетсья **чересстрочное видео**, где пол изображения посылаетсья в одном "кадре" и другая половина в следущем "кадре".
 
-Today screens render mostly using **progressive scan technique**. Progressive is a way of displaying, storing, or transmitting moving images in which all the lines of each frame are drawn in sequence.
+На севоднешний день экраны обычно предстовляют видео техникой **прогресивного скана**. Это способ показывания, хранения и перевода изображений в котором все линии каждего кадра нарисованы одна за другой.
 
-![interlaced vs progressive](/i/interlaced_vs_progressive.png "interlaced vs progressive")
+![чересстрочное видео против прогресивный скан](/i/interlaced_vs_progressive.png "чересстрочное видео против прогресивный скан")
 
-Now we have an idea about how an **image** is represented digitally, how its **colors** are arranged, how many **bits per second** do we spend to show a video, if it's constant (CBR)  or variable (VBR), with a given **resolution** using a given **frame rate** and many other terms such as interlaced, PAR and others.
+Теперь у нас есть предиставление того как xраница **изображение** в цифровом формате, как его **цвета** разположены, сколько **битов в секунду** мы используем что бы показывать видео, если это постоянный битрейт (CBR) или переменный битрейт (VBR), и как это связано с **разрешением** при данной **чистоте кадра**. Так же мы более знакомы с терминами на подобие **чересстрочное видео**, PAR, и т.д. 
 
-> #### Hands-on: Check video properties
-> You can [check most of the  explained properties with ffmpeg or mediainfo.](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#inspect-stream)
+> #### Практика: Рассмотр свойсвтва видео 
+> Вам возможно [увидеть оговоринные свойства с помощью ffmpeg или mediainfo.](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#inspect-stream)
 
 # Redundancy removal
 
