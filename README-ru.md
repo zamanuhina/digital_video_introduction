@@ -35,7 +35,7 @@ cd digital_video_introduction
 - [Основные термины](#основные-термины)
   * [Другие способы кодирования цветного изображения](#другие-способы-кодирование-изображений)
   * [Практика: експерементируем цветами и изображениями](#практика-експерементируем-цветами-и-изображениями)
-  * [DVD это DAR 4:3](#dvd-это-dar-4:3)
+  * [DVD это DAR 4:3](#dvd-это-dar-43)
   * [Практика: Рассмотр свойсвтва видео](#практика-рассмотр-свойства-видео)
 - [Удаление избыточности](#удаление-избыточности)
   * [Цвета, яркость и глаза](#цвета-яркость-и-глаза")
@@ -165,38 +165,38 @@ cd digital_video_introduction
 
 Для этого мы можем експлойтеривоать **характеристики нашего зрения**. Мы разбераем яркость лучше чем цвета. Так же более заметные **повторы частей изобразения во времини**.
 
-## Colors, Luminance and our eyes
+## Цвета, яркость и глаза
 
-Our eyes are [more sensitive to brightness than colors](http://vanseodesign.com/web-design/color-luminance/), you can test it for yourself, look at this picture.
+Наши глаза более чуствительны к [яркосте чем к цветам](http://vanseodesign.com/web-design/color-luminance/), проверти для себя на этом изображение:
 
-![luminance vs color](/i/luminance_vs_color.png "luminance vs color")
+![яркость против цвета](/i/luminance_vs_color.png "яркость против цвета")
 
-If you are unable to see that the colors of the **squares A and B are identical** on the left side, that's fine, it's our brain playing tricks on us to **pay more attention to light and dark than color**. There is a connector, with the same color, on the right side so we (our brain) can easily spot that in fact, they're the same color.
+Если вы не видети что цвета **квадрата А и Б одинаковые** у картинке с лева, то у вас все в порядке, наш мозг настроин **уделять больше внимания на яркость/темноту чем на цвет**. С право вы видите што цвета и в правду одинаковы.
 
-> **Simplistic explanation of how our eyes work**
-> The [eye is a complex organ](http://www.biologymad.com/nervoussystem/eyenotes.htm), it is composed of many parts but we are mostly interested in the cones and rods cells. The eye [contains about 120 million rod cells and 6 million cone cells](https://en.wikipedia.org/wiki/Photoreceptor_cell).
+> **Упрощенное обьяснение функций глаз**
+> Глаз [сложный орган](http://www.biologymad.com/nervoussystem/eyenotes.htm), составлин из многих частей, хотя нас интересует шишочные и палочные клетки. Глаз состоит из порядка [120 милион палочных клеток и 6 милион шишочныч клеток](https://en.wikipedia.org/wiki/Photoreceptor_cell).
 >
-> To **oversimplify**, let's try to put colors and brightness in the eye's parts function. The **[rod cells](https://en.wikipedia.org/wiki/Rod_cell) are mostly responsible for brightness** while the **[cone cells](https://en.wikipedia.org/wiki/Cone_cell) are responsible for color**, there are three types of cones, each with different pigment, namely: [S-cones (Blue), M-cones (Green) and L-cones (Red)](https://upload.wikimedia.org/wikipedia/commons/1/1e/Cones_SMJ2_E.svg).
+> **Упращая дальше**, давайте посмотрим как цвет и яркость действуют на глаза. **[Палочные клетки](https://en.wikipedia.org/wiki/Rod_cell) по большенству отвецтвенны за восприятие яркости**. **[Шишичные клетки](https://en.wikipedia.org/wiki/Cone_cell) отвецтвенны за восприятие цвета**. Есты три типа шишки, каждая со своей окраской: [S-шишки (Синий), M-шишки (Зеленый) и L-cones (Красный)](https://upload.wikimedia.org/wikipedia/commons/1/1e/Cones_SMJ2_E.svg).
 >
-> Since we have many more rod cells (brightness) than cone cells (color), one can infer that we are more capable of distinguishing dark and light than colors.
+> Потому что у нас больше палочных клеток (яркость) чем шишочных (цвет), мы делаем вывод что мы обробатываем больше яркостной информации.
 >
-> ![eyes composition](/i/eyes.jpg "eyes composition")
+> ![состав глаз](/i/eyes.jpg "состав глаз")
 >
-> **Contrast sensitivity functions**
->
-> Researchers of experimental psychology and many other fields have developed many theories on human vision. And one of them is called Contrast sensitivity functions. They are related to spatio and temporal of the light and their value presents at given init light, how much change is required before an observer reported there was a change. Notice the plural of the word "function", this is for the reason that we can measure Contrast sensitivity functions with not only black-white but also colors. The result of these experiments shows that in most cases our eyes are more sensitive to brightness than color.
+> **Функции контрастной чувствительности**
+> 
+> Есть много теорий описывая функции человеческое зрение. Одна из них называется "Функции контрастной чувствительности". Они описывают сколько изминения в цвете может произойти перед тем как наблюдающий его замечает. Функции измеряют не только чуствительность к черно белому, нo так же и яркость при цветах. Експерименты раз за разом показывают что мы более чуствительны к яркости чем к цветам.
 
-Once we know that we're more sensitive to **luma** (the brightness in an image) we can try to exploit it.
+Зная что мы чувствительны к яркосте, мы можем попытатся эксплойтировать этот факт.
 
-### Color model
+### Модель цвета
 
-We first learned [how to color images](#basic-terminology) work using the **RGB model**, but there are other models too. In fact, there is a model that separates luma (brightness) from  chrominance (colors) and it is known as **YCbCr**<sup>*</sup>.
+В начале мы изучали как [распределять цвет на изображениях](#основные-термины) используя **модель RGB**. Существуют другие модели - например, **YCbCr**<sup>*</sup> делит luma/лума (яркость) от chrominance/хроминанц (цветность).
 
-> <sup>*</sup> there are more models which do the same separation.
+> <sup>*</sup> есть другие модели которые так же разделяют между яркостью и цветом.
 
-This color model uses **Y** to represent the brightness and two color channels **Cb** (chroma blue) and **Cr** (chroma red). The [YCbCr](https://en.wikipedia.org/wiki/YCbCr) can be derived from RGB and it also can be converted back to RGB. Using this model we can create full colored images as we can see down below.
+В этой моделе **Y** канал яркости. Так же есть два канала цвета, **Cb** (синяя chroma/хрома) и **Cr** (красная chroma/хрома). Формат [YCbCr](https://en.wikipedia.org/wiki/YCbCr) возможно получить от RGB, и так же можно получить RGB от YCbCr. С помощью YCbCr мы можем состовлять изображения в полном цвете:
 
-![ycbcr example](/i/ycbcr.png "ycbcr example")
+![пример ycbr](/i/ycbcr.png "пример ycbr")
 
 ### Converting between YCbCr and RGB
 
