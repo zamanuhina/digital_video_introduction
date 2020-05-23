@@ -157,13 +157,13 @@ cd digital_video_introduction
 > #### Практика: Рассмотр свойсвтва видео 
 > Вам возможно [увидеть оговоринные свойства с помощью ffmpeg или mediainfo.](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#inspect-stream)
 
-# Redundancy removal
+# Удаление избыточности
 
-We learned that it's not feasible to use video without any compression; **a single one hour video** at 720p resolution with 30fps would **require 278GB<sup>*</sup>**. Since **using solely lossless data compression algorithms** like DEFLATE (used in PKZIP, Gzip, and PNG), **won't** decrease the required bandwidth sufficiently we need to find other ways to compress the video.
+Быстро становитсья ячевидно что работать с видео без компресии практическии не возможно; **один час видео** при разрешение 720p, с частотой кадра 30fps занимает **278GB памяти<sup>*</sup>**. Алгоритмы компресии без потерь, на подобие DEFLATE (использовается в PKZIP, Gzip, PNG) **не сжимают видео достаточно** нам надо искать другие способы сжатья видео.
 
-> <sup>*</sup> We found this number by multiplying 1280 x 720 x 24 x 30 x 3600 (width, height, bits per pixel, fps and time in seconds)
+> <sup>*</sup> Эту цифру мы получаем умнажая 1280 х 720 х 24 х 30 х 3600 (ширина, высота, витовая глубина, чистота кадра и время в секундах).
 
-In order to do this, we can **exploit how our vision works**. We're better at distinguishing brightness than colors, the **repetitions in time**, a video contains a lot of images with few changes, and the **repetitions within the image**, each frame also contains many areas using the same or similar color.
+Для этого мы можем експлойтеривоать **характеристики нашего зрения**. Мы разбераем яркость лучше чем цвета. Так же более заметные **повторы частей изобразения во времини**.
 
 ## Colors, Luminance and our eyes
 
