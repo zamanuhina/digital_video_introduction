@@ -41,7 +41,7 @@ cd digital_video_introduction
   * [Цвета, яркость и глаза](#цвета-яркость-и-глаза")
     + [Модель цвета](#модель-цвета)
     + [Преобразование между YCbCr и RGB](#преобразование-между-ycbcr-и-rgb)
-    + [Хрома сабсамплинг](#хрома-сабсамплинг)
+    + [Подвыборка яркости](#подвыборка-яркости)
     + [Практика: Проверка гистограммы YCbCr](#практика-проверка-гистограммы-ycbcr)
   * [Типы кадров](#типы-кадров)
     + [И кадр (интра, ключевой кадр)](#и-кадр-интра-ключевой-кадр)
@@ -196,26 +196,26 @@ cd digital_video_introduction
 
 В этой моделе **Y** канал яркости. Так же есть два канала цвета, **Cb** (синяя chroma/хрома) и **Cr** (красная chroma/хрома). Формат [YCbCr](https://en.wikipedia.org/wiki/YCbCr) возможно получить от RGB, и так же можно получить RGB от YCbCr. С помощью YCbCr мы можем состовлять изображения в полном цвете:
 
-![пример ycbr](/i/ycbcr.png "пример ycbr")
+![пример ycbcr](/i/ycbcr.png "пример ycbcr")
 
 ### Converting between YCbCr and RGB
 
-Some may argue, how can we produce all the **colors without using the green**?
+Некоторые из вас может спрашивают, как можно показывать **все цвета без зеленого**?
 
-To answer this question, we'll walk through a conversion from RGB to YCbCr. We'll use the coefficients from the **[standard BT.601](https://en.wikipedia.org/wiki/Rec._601)** that was recommended by the **[group ITU-R<sup>*</sup>](https://en.wikipedia.org/wiki/ITU-R)** . The first step is to **calculate the luma**, we'll use the constants suggested by ITU and replace the RGB values.
+Что бы понятжь ответ, давайте посмотрим как мы переводим цветовую модель RGB на YCbCr. Мы будем использовать коэфиценты из стандарта **[BT.601](https://en.wikipedia.org/wiki/Rec._601)**, который был создан **[группой ITU-R<sup>*</sup>](https://en.wikipedia.org/wiki/ITU-R)**. Первый шаг в этом процессе это **высчитать яркость (luma)** и заменить цыфры RGB, используя константы ракомендованны группой ITU.
 
 ```
 Y = 0.299R + 0.587G + 0.114B
 ```
 
-Once we had the luma, we can **split the colors** (chroma blue and red):
+После яркости, мы можем **получить цвета** цвета (chroma синий и красный):
 
 ```
 Cb = 0.564(B - Y)
 Cr = 0.713(R - Y)
 ```
 
-And we can also **convert it back** and even get the **green by using YCbCr**.
+Можно **перевести этот результат обратно**, и дажше **получить зеленый используя YCbCr**
 
 ```
 R = Y + 1.402Cr
@@ -223,25 +223,23 @@ B = Y + 1.772Cb
 G = Y - 0.344Cb - 0.714Cr
 ```
 
-> <sup>*</sup> groups and standards are common in digital video, they usually define what are the standards, for instance, [what is 4K? what frame rate should we use? resolution? color model?](https://en.wikipedia.org/wiki/Rec._2020)
+> <sup>*</sup> Цыфровым видео правят группы и стандарты. Группы определяют стандарты, на пример [что такое 4К? Какую чистоту кадра использоватъ? Решение? Цветную модель?](https://en.wikipedia.org/wiki/Rec._2020).
 
-Generally, **displays** (monitors, TVs, screens and etc) utilize **only the RGB model**, organized in different manners, see some of them magnified below:
+Обычно, **дисплеи** работают только в режиме модели **RGB**, разположеные каким то образом. Некоторые из них показанны тут:
 
-![pixel geometry](/i/new_pixel_geometry.jpg "pixel geometry")
+![пиксельная геометрия](/i/new_pixel_geometry.jpg "пиксельная геометрия")
 
-### Chroma subsampling
+### Подвыборка яркости
 
-With the image represented as luma and chroma components, we can take advantage of the human visual system's greater sensitivity for luma resolution rather than chroma to selectively remove information. **Chroma subsampling** is the technique of encoding images using **less resolution for chroma than for luma**.
+Когда изображение представлено компонентами яркости и цвета, мы можшем воспользоватся чуствительностью глаза к яркосте что бы уменьшить колучество информации. **Подвыборка яркости** техника кодированья изображении с **разрешением для цвета меньше чем для яркости**.
 
+![разрешения подвыборки ycbcr](/i/ycbcr_subsampling_resolution.png "разрешения подвыборки ycbcr")
 
-![ycbcr subsampling resolutions](/i/ycbcr_subsampling_resolution.png "ycbcr subsampling resolutions")
+Так как же уменшаеться разрешение яркости?! Существуют схемы которые описовают как работать с разрешением и слиянием (`конечный цвет = Y + Cb + Cr`).
 
+Эти схемы называются системами подвыборки, обычно показаны соотношением трех чисел - `a:x:y` которое опредиляет разрешение цвета по отношению к `a x 2` блоку пикселей яркости.
 
-How much should we reduce the chroma resolution?! It turns out that there are already some schemas that describe how to handle resolution and the merge (`final color = Y + Cb + Cr`).
-
-These schemas are known as subsampling systems and are expressed as a 3 part ratio - `a:x:y` which defines the chroma resolution in relation to a `a x 2` block of luma pixels.
-
- * `a` is the horizontal sampling reference (usually 4)
+ * `a` ссылка горизонтальный выборки (обычно 4)
  * `x` is the number of chroma samples in the first row of `a` pixels (horizontal resolution in relation to `a`)
  * `y` is the number of changes of chroma samples between the first and seconds rows of `a` pixels.
 
