@@ -229,39 +229,39 @@ G = Y - 0.344Cb - 0.714Cr
 
 ![пиксельная геометрия](/i/new_pixel_geometry.jpg "пиксельная геометрия")
 
-### Подвыборка яркости
+### Цветовая субдискретизация
 
-Когда изображение представлено компонентами яркости и цвета, мы можшем воспользоватся чуствительностью глаза к яркосте что бы уменьшить колучество информации. **Подвыборка яркости** техника кодированья изображении с **разрешением для цвета меньше чем для яркости**.
+Когда изображение представлено компонентами яркости и цвета, мы можшем воспользоватся чуствительностью глаза к яркосте что бы уменьшить количество информации. **Цветовая субдискретизация** техника кодированья изображении с **разрешением для цвета меньше чем для яркости**.
 
-![разрешения подвыборки ycbcr](/i/ycbcr_subsampling_resolution.png "разрешения подвыборки ycbcr")
+![субдискретизация ycbcr](/i/ycbcr_subsampling_resolution.png "субдискретизация ycbcr")
 
-Так как же уменшаеться разрешение яркости?! Существуют схемы которые описовают как работать с разрешением и слиянием (`конечный цвет = Y + Cb + Cr`).
+Так как же уменшаеться разрешение цвета?! Существуют схемы которые описовают как получать цвет от разных разрешений для одного изображение (`конечный цвет = Y + Cb + Cr`).
 
-Эти схемы называются системами подвыборки, обычно показаны соотношением трех чисел - `a:x:y` которое опредиляет разрешение цвета по отношению к `a x 2` блоку пикселей яркости.
+Эти схемы называются системами субдискретизации, обычно показаны соотношением трех чисел - `a:x:y` которое опредиляет разрешение цвета по отношению к `a * 2` блоку пикселей яркости.
 
- * `a` ссылка горизонтальный выборки (обычно 4)
- * `x` is the number of chroma samples in the first row of `a` pixels (horizontal resolution in relation to `a`)
- * `y` is the number of changes of chroma samples between the first and seconds rows of `a` pixels.
+ * `a` горизонтальная ширина (обычно 4)
+ * `x` количество образцов цвета в первом ряду
+ * `y` количество изменений цвета между первым и вторым рядом
+ 
+> В этой схеме есть изклучение, 4:1:0, где выберается только один цвет для каждего `4 x 4` блока разрешения яркости. 
 
-> An exception to this exists with 4:1:0, which provides a single chroma sample within each `4 x 4` block of luma resolution.
+В современных кодеках обычно использыются форматы: **4:4:4** *(Без субдискритизации)*, **4:2:2, 4:1:1, 4:2:0, 4:1:0 и 3:1:1**.
 
-Common schemes used in modern codecs are: **4:4:4** *(no subsampling)*, **4:2:2, 4:1:1, 4:2:0, 4:1:0 and 3:1:1**.
+> Вы можете участовать в [разговорах о цветовой подборке тут](https://github.com/leandromoreira/digital_video_introduction/issues?q=YCbCr).
 
-> You can follow some discussions [to learn more about Chroma Subsampling](https://github.com/leandromoreira/digital_video_introduction/issues?q=YCbCr).
-
-> **YCbCr 4:2:0 merge**
+> **Подборка YCbCr 4:2:0**
 >
-> Here's a merged piece of an image using YCbCr 4:2:0, notice that we only spend 12 bits per pixel.
+> Тут видно как сливается цветовая информация с яркостной в режшиме YCbCr 4:2:0. Заметите, что мы только используем 12 битов на пиксель.
 >
-> ![YCbCr 4:2:0 merge](/i/ycbcr_420_merge.png "YCbCr 4:2:0 merge")
+> ![слитие YCbCr 4:2:0](/i/ycbcr_420_merge.png "слитие YCbCr 4:2:0 merge")
 
-You can see the same image encoded by the main chroma subsampling types, images in the first row are the final YCbCr while the last row of images shows the chroma resolution. It's indeed a great win for such small loss.
+Тут показоно изображение кодированое главными типами субдискретизация. Первый ряд финальний YCbCr; на втором, видно разрешение цветных каналов. Качество изображения нормальное, при этом памяти используется на много меньше.
 
-![chroma subsampling examples](/i/chroma_subsampling_examples.jpg "chroma subsampling examples")
+![примеры субдискретизация](/i/chroma_subsampling_examples.jpg "примеры субдискретизация")
 
-Previously we had calculated that we needed [278GB of storage to keep a video file with one hour at 720p resolution and 30fps](#redundancy-removal). If we use **YCbCr 4:2:0** we can cut **this size in half (139 GB)**<sup>*</sup> but it is still far from ideal.
+Раньее мы вычеслили что нам надо [278GB памяти что бы сохранить час 720p/30fps видео](#удаление-избыточности). Используя режим **YCbCr 4:2:0** мы можем **убрать половину размера до 139GB**<sup>*</sup>, хотя это все равно далеко от идеала.
 
-> <sup>*</sup> we found this value by multiplying width, height, bits per pixel and fps. Previously we needed 24 bits, now we only need 12.
+> <sup>*</sup> это число можно получить умнажая ширину, высоту, биты на пиксел, и чистоту кадра. Раньше мы пользовались 24 битами, теперь нам только надо 12.
 
 <br/>
 
