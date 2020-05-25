@@ -44,12 +44,12 @@ cd digital_video_introduction
     + [Цветовая субдискретизация](#цветовая-субдискретизация)
     + [Практика: Проверка гистограммы YCbCr](#практика-проверка-гистограммы-ycbcr)
   * [Типы кадров](#типы-кадров)
-    + [И кадр (интра, ключевой кадр)](#и-кадр-интра-ключевой-кадр)
-    + [П кадр (предсказанный)](#п-кадр-предсказанный)
+    + [I кадр (интра, ключевой кадр)](#i-кадр-интра-ключевой-кадр)
+    + [P кадр (предсказанный)](#p-кадр-предсказанный)
       - [Практика: Видео с единым I-кадром](#практика-видео-с-единым-i-кадром)
-    + [Б кадр (двунаправленного предсказания)](#б-кадр-двунаправленного-предсказания)
+    + [B кадр (двунаправленного предсказания)](#b-кадр-двунаправленного-предсказания)
       - [Практика: Сравнивание видео с Б-кадрами](#практика-сравнивание-видео-с-б-кадрами)
-    + [Аннотация](#аннотация)
+    + [Конспект](#конспект)
   * [Временная избыточность (меж предскозание)](#временная-избыточность-меж-предскозание)
       - [Практика: Обзор векторов движения](#практика-обзор-векторов-движения)
   * [Пространственная избыточность (внутреннее предсказание)](#пространственная-избыточность-внутреннее-предсказание)
@@ -265,58 +265,59 @@ G = Y - 0.344Cb - 0.714Cr
 
 <br/>
 
-> ### Hands-on: Check YCbCr histogram
-> You can [check the YCbCr histogram with ffmpeg.](/encoding_pratical_examples.md#generates-yuv-histogram) This scene has a higher blue contribution, which is showed by the [histogram](https://en.wikipedia.org/wiki/Histogram).
+> ### Практика: Проверка гистограммы YCbCr
+> Возможно проверить [гистограмму YCbCr с помошью ffmpeg.](/encoding_pratical_examples.md#generates-yuv-histogram). У этого изображение выше концентрация синего, что видно на [гистограмме](https://en.wikipedia.org/wiki/Histogram).
 >
-> ![ycbcr color histogram](/i/yuv_histogram.png "ycbcr color histogram")
+> ![гистограмма ycbcr](/i/yuv_histogram.png "гистограмма ycbcr")
 
-### Color, luma, luminance, gama video review
+### Цвет, лума, яркость, гамма
 
-Watch this incredible video explaining what is luma and learn about luminance, gamma, and color.
+Отличное видео для тех кто хотят преобрезти глубже понятие лумы, яркости, гаммы, и цвета.
 [![Analog Luma - A history and explanation of video](http://img.youtube.com/vi/Ymt47wXUDEU/0.jpg)](http://www.youtube.com/watch?v=Ymt47wXUDEU)
 
-## Frame types
+## Типы кадров
 
-Now we can move on and try to eliminate the **redundancy in time** but before that let's establish some basic terminology. Suppose we have a movie with 30fps, here are its first 4 frames.
+Теперь мы можем сосридоточится на удаление **избыточности во времини**. С начала, нам надо установить основные термины - скажим, что мы работаем с фильмом 30FPS, и первые 4 кадра выглядят так:
 
-![ball 1](/i/smw_background_ball_1.png "ball 1") ![ball 2](/i/smw_background_ball_2.png "ball 2") ![ball 3](/i/smw_background_ball_3.png "ball 3")
-![ball 4](/i/smw_background_ball_4.png "ball 4")
+![шар 1](/i/smw_background_ball_1.png "шар 1") ![шар 2](/i/smw_background_ball_2.png "шар 2") ![шар 3](/i/smw_background_ball_3.png "шар 3")
+![шар 4](/i/smw_background_ball_4.png "шар 4")
 
-We can see **lots of repetitions** within frames like **the blue background**, it doesn't change from frame 0 to frame 3. To tackle this problem, we can **abstractly categorize** them as three types of frames.
+Мы видим много повторений между кадрами, например у синего фона который не мениается на кадрах 0 - 3. Что бы начать решать эту проблему, мы можем абстрактно классифицировать их как 3 разныч типа кадра.
 
-### I Frame (intra, keyframe)
+### I кадр (интра, ключевой кадр)
 
-An I-frame (reference, keyframe, intra) is a **self-contained frame**. It doesn't rely on anything to be rendered, an I-frame looks similar to a static photo. The first frame is usually an I-frame but we'll see I-frames inserted regularly among other types of frames.
+I кадр, (ссылка, ключевой кадр, внутренний) **независемый кадр**. Что бы его нарисвоать не нужно дополнительной информации, и он похож на фотографию. Первый кадр обычно I кадр, но мы увидем как I кадры регулярно вставляют среди другич типов кадра. 
 
-![ball 1](/i/smw_background_ball_1.png "ball 1")
+![шар 1](/i/smw_background_ball_1.png "шар 1")
 
-### P Frame (predicted)
+### P кадр (предсказанный)
 
-A P-frame takes advantage of the fact that almost always the current picture can be **rendered using the previous frame.** For instance, in the second frame, the only change was the ball that moved forward. We can **rebuild frame 1, only using the difference and referencing to the previous frame**.
+P-кадр пользуется фактом что почти всегда можно нарисовать изображение **с помощью преведущего кадра**. Например, во втором кадре, шар поменял расположение - все остольное осталось одинаковым. Мы можем построить **первый кадр используя только разницу между двумя кадрами**.
 
-![ball 1](/i/smw_background_ball_1.png "ball 1") <-  ![ball 2](/i/smw_background_ball_2_diff.png "ball 2")
+![шар 1](/i/smw_background_ball_1.png "шар 1") <-  ![шар 2](/i/smw_background_ball_2_diff.png "шар 2")
 
-> #### Hands-on: A video with a single I-frame
-> Since a P-frame uses less data why can't we encode an entire [video with a single I-frame and all the rest being P-frames?](/encoding_pratical_examples.md#1-i-frame-and-the-rest-p-frames)
+> #### Практика: Видео с единым I-кадром
+
+> Если P-кадры используют меньше памяти, то почему бы нам не закодировать целое [видео одним I-кадром и оставить все последующие кадры как P-кадры?](/encoding_pratical_examples.md#1-i-frame-and-the-rest-p-frames)
 >
-> After you encoded this video, start to watch it and do a **seek for an advanced** part of the video, you'll notice **it takes some time** to really move to that part. That's because a **P-frame needs a reference frame** (I-frame for instance) to be rendered.
+> После кодировки этого видео, начните смотреть его и попробуйте перескочить к пожемму времини. Станит заметно что эта функция длица **долгое време**. **P-кадрам нужны ссылочные кадры** (например I-кадр) что бы их нарисовать.
 >
-> Another quick test you can do is to encode a video using a single I-Frame and then [encode it inserting an I-frame each 2s](/encoding_pratical_examples.md#1-i-frames-per-second-vs-05-i-frames-per-second) and **check the size of each rendition**.
+> Так же можно закодировать видео с одним I-кадром а потом попробовать [закодировать его вставляя I-кадр каждие две секунды](/encoding_pratical_examples.md#1-i-frames-per-second-vs-05-i-frames-per-second), сравнивая размера в конце.
 
-### B Frame (bi-predictive)
+### B кадр (двунаправленного предсказания)
 
-What about referencing the past and future frames to provide even a better compression?! That's basically what a B-frame is.
+Так же можно ссылаца на будущие кадры как и преведущие, метод который економит еще больше памяти - как раз это и делают B-кадры.
 
-![ball 1](/i/smw_background_ball_1.png "ball 1") <-  ![ball 2](/i/smw_background_ball_2_diff.png "ball 2") -> ![ball 3](/i/smw_background_ball_3.png "ball 3")
+![шар 1](/i/smw_background_ball_1.png "шар 1") <-  ![шар 2](/i/smw_background_ball_2_diff.png "шар 2") -> ![шар 3](/i/smw_background_ball_3.png "шар 3")
 
-> #### Hands-on: Compare videos with B-frame
-> You can generate two renditions, first with B-frames and other with [no B-frames at all](/encoding_pratical_examples.md#no-b-frames-at-all) and check the size of the file as well as the quality.
+> #### Практика: Сравнивание видео с Б-кадрами
+> Вы можете составить две версии видео, одну с B-кадрами и другую [вообще без B-кадров](/encoding_pratical_examples.md#no-b-frames-at-all). Обратите внемание на размер файла и качество видео.
 
-### Summary
+### Конспект
 
-These frames types are used to **provide better compression**. We'll look how this happens in the next section, but for now we can think of **I-frame as expensive while P-frame is cheaper but the cheapest is the B-frame.**
+Эти кадры используются для **более ефективной компресии**. Мы увидем как это произхoдит в следующем отделе, на не теперешний момент нам достаточно помнить что **I-кадр дорогой, P-кадр дешевле и B-кадр самый дешевый**.
 
-![frame types example](/i/frame_types.png "frame types example")
+![типы кадров](/i/frame_types.png "типы кадров")
 
 ## Temporal redundancy (inter prediction)
 
