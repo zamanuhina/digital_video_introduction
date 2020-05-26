@@ -319,37 +319,38 @@ P-кадр пользуется фактом что почти всегда мо
 
 ![типы кадров](/i/frame_types.png "типы кадров")
 
-## Temporal redundancy (inter prediction)
+## Временная избыточность (меж предскозание)
 
-Let's explore the options we have to reduce the **repetitions in time**, this type of redundancy can be solved with techniques of **inter prediction**.
+Давайте посмотрим как мы можем понизеть количество **повторов во времини**. Такого типа избыточности можно достич техниками **меж предсказания**.
 
+По попробуем **потратить меньше битов** кодируя кадры 0 и 1.
 
-We will try to **spend fewer bits** to encode the sequence of frames 0 and 1.
+![оригинальные кадры](/i/original_frames.png "оригинальные кадры")
 
-![original frames](/i/original_frames.png "original frames")
+Один подход это просто **вычитать разницу между кадром 1 и 0**, и мы получим все что надо что бы **закодировать остаток**.
 
-One thing we can do it's a subtraction, we simply **subtract frame 1 from frame 0** and we get just what we need to **encode the residual**.
+![кадры делта](/i/difference_frames.png "кадры делта")
 
-![delta frames](/i/difference_frames.png "delta frames")
+Не плохо, но есть еще **лучше метод**, который использует еще меньше битов. С начала, давай разрежим `кадр 0` на серию разделов, после чего мы можем попытатся соотвецтвовать разделы с `кадра 0` до `кадра 1`, действие наподобие **оценки девежения**.
 
-But what if I tell you that there is a **better method** which uses even fewer bits?! First, let's treat the `frame 0` as a collection of well-defined partitions and then we'll try to match the blocks from `frame 0` on `frame 1`. We can think of it as **motion estimation**.
+> ### Википедиа - компенсация движению блока
+> **Компенсаци движению блока** делит текущий кадр на отдлеьные разделы, после чего векторы компенсации движения **показывают от куда эти блоки появились** (распостраненная ошыбка идея того что, разделив преведущий кадр на отдельные разделы, векторы показывают куда эти разделы двигаются). Исходные разделы обычно перекрывают друг друга в исходном кадре. Некотороя компрессия видео текущий кадр из кусков разных ранее переданных кадров.
 
-> ### Wikipedia - block motion compensation
-> "**Block motion compensation** divides up the current frame into non-overlapping blocks, and the motion compensation vector **tells where those blocks come from** (a common misconception is that the previous frame is divided up into non-overlapping blocks, and the motion compensation vectors tell where those blocks move to). The source blocks typically overlap in the source frame. Some video compression algorithms assemble the current frame out of pieces of several different previously-transmitted frames."
+![делта кадры](/i/original_frames_motion_estimation.png "делта кадры")
 
-![delta frames](/i/original_frames_motion_estimation.png "delta frames")
+Мы можем предсказать что шарик сдвинулся от `x=0, y=25` до `x=6, y=26`, и что **х** и **y** числа это **векторы движения**. Что бы сэкономить на битах дальше, мы можем **закодривоть только разницу в векторах двюижения** между последним положением блока и предсказанным, так что финальный вектор движения получается `x=6 (6-0), y=1 (26-25)`.
 
-We could estimate that the ball moved from `x=0, y=25` to `x=6, y=26`, the **x** and **y** values are the **motion vectors**. One **further step** we can do to save bits is to **encode only the motion vector difference** between the last block position and the predicted, so the final motion vector would be `x=6 (6-0), y=1 (26-25)`
+> При настоящем использование этой техники, шар был бы разделен на `n` разделов. Процесс при этом остается одинаковым.
 
-> In a real-world situation, this **ball would be sliced into n partitions** but the process is the same.
+> Обьекты на кадре **могут двигатся 3Dобразно**, шар может стать меньше когда он уходит в фон. Впольне возможно (и нормально) что мы не сможем найти идеальнoe совпадение для раздела которму мы ищим совпадение. Вот изображение сравняя наше предскозание с настоящим кадром.
 
-The objects on the frame **move in a 3D way**, the ball can become smaller when it moves to the background. It's normal that **we won't find the perfect match** to the block we tried to find a match. Here's a superposed view of our estimation vs the real picture.
-
-![motion estimation](/i/motion_estimation.png "motion estimation")
+![предсказание движения](/i/motion_estimation.png "предсказание движения")
 
 But we can see that when we apply **motion estimation** the **data to encode is smaller** than using simply delta frame techniques.
 
-![motion estimation vs delta ](/i/comparison_delta_vs_motion_estimation.png "motion estimation delta")
+Все равно, видно что когда мы используем **предсказание движения** информации которую нам **надо кодировать меньше** чем если мы бы использовали технику делта кадров.
+
+![предсказание движения против делта](/i/comparison_delta_vs_motion_estimation.png "предсказание движения против делта")
 
 > ### How real motion compensation would look
 > This technique is applied to all blocks, very often a ball would be partitioned in more than one block.
