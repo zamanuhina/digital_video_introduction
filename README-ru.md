@@ -346,58 +346,56 @@ P-кадр пользуется фактом что почти всегда мо
 
 ![предсказание движения](/i/motion_estimation.png "предсказание движения")
 
-But we can see that when we apply **motion estimation** the **data to encode is smaller** than using simply delta frame techniques.
-
 Все равно, видно что когда мы используем **предсказание движения** информации которую нам **надо кодировать меньше** чем если мы бы использовали технику делта кадров.
 
 ![предсказание движения против делта](/i/comparison_delta_vs_motion_estimation.png "предсказание движения против делта")
 
-> ### How real motion compensation would look
-> This technique is applied to all blocks, very often a ball would be partitioned in more than one block.
->  ![real world motion compensation](/i/real_world_motion_compensation.png "real world motion compensation")
-> Source: https://web.stanford.edu/class/ee398a/handouts/lectures/EE398a_MotionEstimation_2012.pdf
+> ### Как выглядет настоящая компенсация движения
+> Обычно эта техника используется для всех разделов, и обычно один шар как в преведущих кадрах будет разделен на несколько разделов.
+>  ![настоящая компенсация движения](/i/real_world_motion_compensation.png "настоящая компенсация движения")
+> Ссылка: https://web.stanford.edu/class/ee398a/handouts/lectures/EE398a_MotionEstimation_2012.pdf
 
-You can [play around with these concepts using jupyter](/frame_difference_vs_motion_estimation_plus_residual.ipynb).
+Вы можете [експерементировать этими техниками в jupyter](/frame_difference_vs_motion_estimation_plus_residual.ipynb).
 
-> #### Hands-on: See the motion vectors
-> We can [generate a video with the inter prediction (motion vectors)  with ffmpeg.](/encoding_pratical_examples.md#generate-debug-video)
+> #### Практика: Обзор векторов движения
+> Мы можем [создать видео с внешним предсказанием (векторами движения) с помощью ffmpeg.](/encoding_pratical_examples.md#generate-debug-video)
 >
-> ![inter prediction (motion vectors) with ffmpeg](/i/motion_vectors_ffmpeg.png "inter prediction (motion vectors) with ffmpeg")
+> ![внешние предсказание (векторы движения) с помощью ffmpeg](/i/motion_vectors_ffmpeg.png "внешние предсказание (векторы движения) с помощью ffmpeg")
 >
-> Or we can use the [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (which is paid but there is a free trial version which limits you to only the first 10 frames).
+> Так же можно использовать [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (програма платная, но есть бесплатная, пробная версия, которая ограничивает пользу на первые 10 кадров).
 >
-> ![inter prediction intel video pro analyzer](/i/inter_prediction_intel_video_pro_analyzer.png "inter prediction intel video pro analyzer")
+> ![внешние предсказание intel video pro analyzer](/i/inter_prediction_intel_video_pro_analyzer.png "внешние предсказание intel video pro analyzer")
 
-## Spatial redundancy (intra prediction)
+## Пространственная избыточность (внутреннее предсказание)
 
-If we analyze **each frame** in a video we'll see that there are also **many areas that are correlated**.
+Если мы проанализируем **каждый кадр** в видео, мы увидим что есть **много областей, которые имеют отношение друг к другу**.
 
 ![](/i/repetitions_in_space.png)
 
-Let's walk through an example. This scene is mostly composed of blue and white colors.
+Давайте пройдемся по примеру. Эта сцена в основном состоит из синего и белого.
 
 ![](/i/smw_bg.png)
 
-This is an `I-frame` and we **can't use previous frames** to predict from but we still can compress it. We will encode the red block selection. If we **look at its neighbors**, we can **estimate** that there is a **trend of colors around it**.
+Это `I-кадр`, и мы **не можем использовать предыдущие кадры** для прогнозирования - при этом, мы все еще можем сжать его. Мы закодируем информацию в красном разделе. Если мы **посмотрим на его соседей**, мы можем понять что существует **тренд цветов вокруг него**.
 
 ![](/i/smw_bg_block.png)
 
-We will **predict** that the frame will continue to **spread the colors vertically**, it means that the colors of the **unknown pixels will hold the values of its neighbors**.
+Мы **предскажем**, что в кадре будут **распространятся цвета по вертикали**, то есть цвета пикселей о которых мы не знаем в этой областе **будут содержать цвета соседей**.
 
 ![](/i/smw_bg_prediction.png)
 
-Our **prediction can be wrong**, for that reason we need to apply this technique (**intra prediction**) and then **subtract the real values** which gives us the residual block, resulting in a much more compressible matrix compared to the original.
+Наше **предсказание может быть неверным**, по этому нам надо применить этот метод (**внутреннее предсказание**), а затем **вычесть реальные числа цветов**, что дает нам остаточный разедел и дает нам более сжимаемою матрицу по сравнению с оригиналой.
 
 ![](/i/smw_residual.png)
 
-> #### Hands-on: Check intra predictions
-> You can [generate a video with macro blocks and their predictions with ffmpeg.](/encoding_pratical_examples.md#generate-debug-video) Please check the ffmpeg documentation to understand the [meaning of each block color](https://trac.ffmpeg.org/wiki/Debug/MacroblocksAndMotionVectors#AnalyzingMacroblockTypes).
+> #### Практика: проверка внутренних предсказаний
+> Вы можете [зделать видео с макро разделами и их предскозаниями в ffmpeg.](/encoding_pratical_examples.md#generate-debug-video) Пожалуйста проверите документацию ffmpeg что бы понять [значение каждего блока цвета](https://trac.ffmpeg.org/wiki/Debug/MacroblocksAndMotionVectors#AnalyzingMacroblockTypes).
 >
-> ![intra prediction (macro blocks) with ffmpeg](/i/macro_blocks_ffmpeg.png "inter prediction (motion vectors) with ffmpeg")
+> ![внутринее предсказания (макро разделы) с ffmpeg](/i/macro_blocks_ffmpeg.png "внутринее предсказания (макро разделы) с ffmpeg")
 >
-> Or we can use the [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (which is paid but there is a free trial version which limits you to only the first 10 frames).
+> Так же можно использовать [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (програма платная, но есть бесплатная, пробная версия, которая ограничивает пользу на первые 10 кадров).
 >
-> ![intra prediction intel video pro analyzer](/i/intra_prediction_intel_video_pro_analyzer.png "intra prediction intel video pro analyzer")
+> ![внутринее предсказания intel video pro analyzer](/i/intra_prediction_intel_video_pro_analyzer.png "внутринее предсказания intel video pro analyzer")
 
 # How does a video codec work?
 
