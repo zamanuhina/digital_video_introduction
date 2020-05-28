@@ -348,7 +348,7 @@ P-кадр пользуется фактом что почти всегда мо
 
 Все равно, видно что когда мы используем **предсказание движения** информации которую нам **надо кодировать меньше** чем если мы бы использовали технику делта кадров.
 
-![предсказание движения против делта](/i/comparison_delta_vs_motion_estimation.png "предсказание движения против делта")
+![предсказание движения против делты](/i/comparison_delta_vs_motion_estimation.png "предсказание движения против делты")
 
 > ### Как выглядет настоящая компенсация движения
 > Обычно эта техника используется для всех разделов, и обычно один шар как в преведущих кадрах будет разделен на несколько разделов.
@@ -397,17 +397,17 @@ P-кадр пользуется фактом что почти всегда мо
 >
 > ![внутринее предсказания intel video pro analyzer](/i/intra_prediction_intel_video_pro_analyzer.png "внутринее предсказания intel video pro analyzer")
 
-# How does a video codec work?
+# Как действует видео кодек?
 
-## What? Why? How?
+## Что? Мочему? Как?
 
-**What?** It's a piece of software / hardware that compresses or decompresses digital video. **Why?** Market and society demands higher quality videos with limited bandwidth or storage. Remember when we [calculated the needed bandwidth](#basic-terminology) for 30 frames per second, 24 bits per pixel, resolution of a 480x240 video? It was **82.944 Mbps** with no compression applied. It's the only way to deliver HD/FullHD/4K in TVs and the Internet. **How?** We'll take a brief look at the major techniques here.
+**Что такое видео кодек?** Это система, программная или физическая, котороя сжимает или разжимает цифровое видео. **За чем?** Обществу, и в свою очередь рынку нужно видео высокого качества при ограниченом обьеме передачы или хренения информации. Помните когда мы [высчитали нужный обьем передачи](#основные-термины) для видео у которого 30 кадро на секунду, с битовой глубеной 24 бита и при разрешение 480х240? Это было **82.944mbps** без компресии. Только так можно передовать HD/FullHD/4K видео к телевизору или по интернету. **Как?** Мы провидем поверхностный обзор главныч техник здесь.
 
-> **CODEC vs Container**
+> **Кодек или контейнер?**
 >
-> One common mistake that beginners often do is to confuse digital video CODEC and [digital video container](https://en.wikipedia.org/wiki/Digital_container_format). We can think of **containers** as a wrapper format which contains metadata of the video (and possible audio too), and the **compressed video** can be seen as its payload.
+> Очень часто путается цыфровой видео кодек и [цыфровой видео контейнер](https://en.wikipedia.org/wiki/Digital_container_format). **Контейнер** можно представлять как оберток который содержит метаданные о видео (и возможно о звуке). **Сжатое видео** можно представить как его дoставочное содержaние.
 >
-> Usually, the extension of a video file defines its video container. For instance, the file `video.mp4` is probably a **[MPEG-4 Part 14](https://en.wikipedia.org/wiki/MPEG-4_Part_14)** container and a file named `video.mkv` it's probably a **[matroska](https://en.wikipedia.org/wiki/Matroska)**. To be completely sure about the codec and container format we can use [ffmpeg or mediainfo](/encoding_pratical_examples.md#inspect-stream).
+> Обычно, расширение файла указывает тип контейнера. Например, файл `video.mp4` скорее всяго контейнер **[MPEG-4 Part 14](https://en.wikipedia.org/wiki/MPEG-4_Part_14)**, а файл с названием `video.mkv` скорее всяго контейнер **[matroska](https://en.wikipedia.org/wiki/Matroska)**. Что бы быть уверенным, можно использовать [ffmpeg или mediainfo](/encoding_pratical_examples.md#inspect-stream).
 
 ## History
 
