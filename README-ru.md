@@ -399,7 +399,7 @@ P-кадр пользуется фактом что почти всегда мо
 
 # Как действует видео кодек?
 
-## Что? Мочему? Как?
+## Что? Почему? Как?
 
 **Что такое видео кодек?** Это система, программная или физическая, котороя сжимает или разжимает цифровое видео. **За чем?** Обществу, и в свою очередь рынку нужно видео высокого качества при ограниченом обьеме передачы или хренения информации. Помните когда мы [высчитали нужный обьем передачи](#основные-термины) для видео у которого 30 кадро на секунду, с битовой глубеной 24 бита и при разрешение 480х240? Это было **82.944mbps** без компресии. Только так можно передовать HD/FullHD/4K видео к телевизору или по интернету. **Как?** Мы провидем поверхностный обзор главныч техник здесь.
 
@@ -411,34 +411,35 @@ P-кадр пользуется фактом что почти всегда мо
 
 ## History
 
-Before we jump into the inner workings of a generic codec, let's look back to understand a little better about some old video codecs.
+Прежде чем мы углубимся во механизмы универсального кодека, давайте посмотрим в прошлое, чтобы немного лучше понять некоторые старые видеокодеки.
 
-The video codec [H.261](https://en.wikipedia.org/wiki/H.261)  was born in 1990 (technically 1988), and it was designed to work with **data rates of 64 kbit/s**. It already uses ideas such as chroma subsampling, macro block, etc. In the year of 1995, the **H.263** video codec standard was published and continued to be extended until 2001.
+Видео кодек [H.261](https://en.wikipedia.org/wiki/H.261) официально родился в 1990, и был устроен работать при **обемене информации скоростью 64 kbit/s**. Уже используют методы на подобее цветовой субдесктирезации, макро блоки е т.д. В 1995 году, выпустили кодек **H.263** - этот стандарт прожил до 2001ого, время на пратижение которого на дним постоянно работали и улучшали.
 
-In 2003 the first version of **H.264/AVC** was completed. In the same year, a company called **TrueMotion** released their video codec as a **royalty-free** lossy video compression called **VP3**. In 2008, **Google bought** this company, releasing **VP8** in the same year. In December of 2012, Google released the **VP9** and it's  **supported by roughly ¾ of the browser market** (mobile included).
 
- **[AV1](https://en.wikipedia.org/wiki/AOMedia_Video_1)** is a new **royalty-free** and open source video codec that's being designed by the [Alliance for Open Media (AOMedia)](http://aomedia.org/), which is composed of the **companies: Google, Mozilla, Microsoft, Amazon, Netflix, AMD, ARM, NVidia, Intel and Cisco** among others. The **first version** 0.1.0 of the reference codec was **published on April 7, 2016**.
+В 2003 году была завершена первая версия **H.264 / AVC**. В том же году компания под названием **TrueMotion** выпустила свой видеокодек **без лицензионных отчислений** для сжатия видео с потерями под названием **VP3**. В 2008 году **Google купил** эту компанию, выпустив **VP8** в том же году. В декабре 2012 года Google выпустил **VP9**, и он **поддерживается примерно на ¾ из всех браузеров** (включая мобильные устройства).
 
-![codec history timeline](/i/codec_history_timeline.png "codec history timeline")
 
-> #### The birth of AV1
+**[AV1](https://en.wikipedia.org/wiki/AOMedia_Video_1)** - это новый **бесплатный кодек**, с открытым кодом, который разрабатывается [Альянсом открытых медиа (AOMedia)](http://aomedia.org/), в которую входят **компании: Google, Mozilla, Microsoft, Amazon, Netflix, AMD, ARM, NVidia, Intel и Cisco** и другие. **Первая версия** 0.1.0 эталонного кодека **была опубликована 7 апреля 2016 года**.
+
+![история кодеков](/i/codec_history_timeline.png "история кодеков")
+> #### Рождение AV1
 >
-> Early 2015, Google was working on [VP10](https://en.wikipedia.org/wiki/VP9#Successor:_from_VP10_to_AV1), Xiph (Mozilla) was working on [Daala](https://xiph.org/daala/) and Cisco open-sourced its royalty-free video codec called [Thor](https://tools.ietf.org/html/draft-fuldseth-netvc-thor-03).
+> В начале 2015 года Google работали над [VP10](https://en.wikipedia.org/wiki/VP9#Successor:_from_VP10_to_AV1), Xiph (Mozilla) работали над [Daala](https://xiph.org/daala/) и Cisco открыли свой бесплатный видеокодек под названием [Thor](https://tools.ietf.org/html/draft-fuldseth-netvc-thor-03).
 >
-> Then MPEG LA first announced annual caps for HEVC (H.265) and fees 8 times higher than H.264 but soon they changed the rules again:
-> * **no annual cap**,
-> * **content fee** (0.5% of revenue) and
-> * **per-unit fees about 10 times higher than h264**.
+> Затем MPEG LA объявили годовые ограничения для HEVC (H.265) и сtoймость использованья в 8 раз выше, чем H.264. Вскоре они снова изменили правила:
+> * **нет годового лимита**,
+> * **плата за контент**, (0,5% от выручки) и
+> * **Плата за единицу продукции примерно в 10 раз выше, чем h264**.
 >
-> The [alliance for open media](http://aomedia.org/about-us/) was created by companies from hardware manufacturer (Intel, AMD, ARM , Nvidia, Cisco), content delivery (Google, Netflix, Amazon), browser maintainers (Google, Mozilla), and others.
+> [Альянс для открытых медиа](http://aomedia.org/about-us/) был создан производителями оборудованья (Intel, AMD, ARM, Nvidia, Cisco), контент доставчиками (Google, Netflix, Amazon) создателями враузеров (Google, Mozilla) и другими.
 >
-> The companies had a common goal, a royalty-free video codec and then AV1 was born with a much [simpler patent license](http://aomedia.org/license/patent/). **Timothy B. Terriberry** did an awesome presentation, which is the source of this section, about the [AV1 conception, license model and its current state](https://www.youtube.com/watch?v=lzPaldsmJbk).
+> У компаний была общая цель - бесплатный видео кодек, результат чаго является AV1, у которого [патентная лицензия на много проще](http://aomedia.org/license/patent/). **Тимоти Б. Терриберри** сделал потрясающую презентацию, которая является источником этого раздела, о [концепции AV1, модели лицензии и ее текущем состоянии](https://www.youtube.com/watch?v=lzPaldsmJbk ).
 >
-> You'll be surprised to know that you can **analyze the AV1 codec through your browser**, go to http://aomanalyzer.org/
+> Вы будете удивлены, узнав что возможно **проанализировать кодек AV1 через браузер**: http://aomanalyzer.org/
 >
-> ![av1 browser analyzer](/i/av1_browser_analyzer.png "av1 browser analyzer")
+>![браузерный анализатор av1](/i/av1_browser_analyzer.png "браузерный анализатор av1")
 >
-> PS: If you want to learn more about the history of the codecs you must learn the basics behind [video compression patents](https://www.vcodex.com/video-compression-patents/).
+> PS: Если вы хотите узнать больше об истории кодеков, взгляните на [патенты для сжатия видео](https://www.vcodex.com/video-compression-patents/).
 
 ## A generic codec
 
