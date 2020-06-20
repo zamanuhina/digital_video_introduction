@@ -441,21 +441,21 @@ P-кадр пользуется фактом что почти всегда мо
 >
 > PS: Если вы хотите узнать больше об истории кодеков, взгляните на [патенты для сжатия видео](https://www.vcodex.com/video-compression-patents/).
 
-## A generic codec
+## Общий кодек
 
-We're going to introduce the **main mechanics behind a generic video codec** but most of these concepts are useful and used in modern codecs such as VP9, AV1 and HEVC. Be sure to understand that we're going to simplify things a LOT. Sometimes we'll use a real example (mostly H.264) to demonstrate a technique.
+Сейчас мы попытаемся описать **основные механизмы универсального видеокодека**, концепций которые полезны и используются в современных кодеках, на примере VP9, ​​AV1 и HEVC. Это будут упрощенные схемы, хотя иногда мы будем использовать реальные примеры (в основном по отношению к H.264) для демонстрации техники.
 
-## 1st step - picture partitioning
+## 1-й шаг - разбиение изображения
 
-The first step is to **divide the frame** into several **partitions, sub-partitions** and beyond.
+Первым шагом действия кодека является **разделение кадра** на несколько **разделов, подразделов** и т.д.
 
-![picture partitioning](/i/picture_partitioning.png "picture partitioning")
+![разделение изображений](/i/picture_partitioning.png "разделение изображений")
 
-**But why?** There are many reasons, for instance, when we split the picture we can work the predictions more precisely, using small partitions for the small moving parts while using bigger partitions to a static background.
+**Зачем?** Есть много причин - разделяя картинку, мы можем точнее обрабатывать прогнозы, используя маленькие разделы для маленьких движущихся частей видео и большие разделы для статического фона.
 
-Usually, the CODECs **organize these partitions** into slices (or tiles), macro (or coding tree units) and many sub-partitions. The max size of these partitions varies, HEVC sets 64x64 while AVC uses 16x16 but the sub-partitions can reach sizes of 4x4.
+Обычно кодеки **организуют эти разделы** в срезы (или фрагменты), макро (или блоки схемы кодирования) и множество подразделов. Максимальный размер этих разделов варьируется, HEVC устанавливает 64x64, в то время как AVC использует 16x16, но подразделы могут достигать размеров 4x4.
 
-Remember that we learned how **frames are typed**?! Well, you can **apply those ideas to blocks** too, therefore we can have I-Slice, B-Slice, I-Macroblock and etc.
+Вы помните **разные типы кадров**? Возможно **применить эти идеи и к блокам**, поэтому у нас могут быть I-Slice, B-Slice, I-Macroblock и т.д.
 
 > ### Hands-on: Check partitions
 > We can also use the [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (which is paid but there is a free trial version which limits you to only the first 10 frames). Here are [VP9 partitions](/encoding_pratical_examples.md#transcoding) analyzed.
