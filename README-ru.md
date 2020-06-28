@@ -62,7 +62,7 @@ cd digital_video_introduction
   * [1-й шаг - разделение изображений](#1-й-шаг---разделение-изображений)
     + [Практика: Проверка разделов](#практика-проверка-разделов)
   * [2-й шаг - предсказания](#2-й-шаг---предсказания)
-  * [3-й шаг - преобразования](#3-й-шаг---преобразования)
+  * [3-й шаг - трансформация](#3-й-шаг---трансформация)
     + [Практика: выбрасывание разных коэффициентов](#практика-выбрасывание-разных-коэффициентов)
   * [4-й шаг - квантование](#4-й-шаг---квантование)
     + [Практика: квантование](#практика-квантование)
@@ -457,116 +457,115 @@ P-кадр пользуется фактом что почти всегда мо
 
 Вы помните **разные типы кадров**? Возможно **применить эти идеи и к блокам**, поэтому у нас могут быть I-Slice, B-Slice, I-Macroblock и т.д.
 
-> ### Hands-on: Check partitions
-> We can also use the [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (which is paid but there is a free trial version which limits you to only the first 10 frames). Here are [VP9 partitions](/encoding_pratical_examples.md#transcoding) analyzed.
+> ### Практика: проверка разделов
+> Мы можем использовать [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) (программа платная, хотя есть бестплатная версия где можно проанализировать первых десять кадров). Вот [разделы VP9](/encoding_pratical_examples.md#transcoding).
 >
-> ![VP9 partitions view intel video pro analyzer ](/i/paritions_view_intel_video_pro_analyzer.png "VP9 partitions view intel video pro analyzer")
+> ![разделы VP9 intel video pro analyzer ](/i/paritions_view_intel_video_pro_analyzer.png "разделы VP9 intel video pro analyzer")
 
-## 2nd step - predictions
+## 2-й шаг - предсказания
 
-Once we have the partitions, we can make predictions over them. For the [inter prediction](#temporal-redundancy-inter-prediction) we need **to send the motion vectors and the residual** and the [intra prediction](#spatial-redundancy-intra-prediction) we'll **send the prediction direction and the residual** as well.
+Как только у нас есть разделы, мы можем использовать их для предскозаний. Для [межкадрового предсказания](#временная-избыточность-меж-предскозание) нам нужно **использовать векторы движения и остаток**, а для [внутрекадрового предсказания](#пространственная-избыточность-внутреннее-предсказание) мы будем **использаовать предсказанное направление и остаток**.
 
-## 3rd step - transform
+## 3-й шаг - трансформация
 
-After we get the residual block (`predicted partition - real partition`), we can **transform** it in a way that lets us know which **pixels we can discard** while keeping the **overall quality**. There are some transformations for this exact behavior.
+После того, как мы получим остаточный блок (`предсказанный раздел - реальный раздел`), мы можем **трансформировать его** образом которым даст нам знать, какие **пиксели мы можем выбросить**, сохраняя при этом **общее качество**. Есть некоторые трансформации которые тут нам помогут.
 
-Although there are [other transformations](https://en.wikipedia.org/wiki/List_of_Fourier-related_transforms#Discrete_transforms), we'll look more closely at the discrete cosine transform (DCT). The [**DCT**](https://en.wikipedia.org/wiki/Discrete_cosine_transform) main features are:
+Хотя есть [другие трансформации](https://en.wikipedia.org/wiki/List_of_Fourier-related_transforms#Discrete_transforms), мы более подробно рассмотрим дискретную косинусную трансформацию, ДСТ (DCT). Основные функции [**DCT**](https://en.wikipedia.org/wiki/Discrete_cosine_transform):
 
-* **converts** blocks of **pixels** into  same-sized blocks of **frequency coefficients**.
-* **compacts** energy, making it easy to eliminate spatial redundancy.
-* is **reversible**, a.k.a. you can reverse to pixels.
+* **Переводит блоки пикселей** в **блоки одинакового размера частотных коэффициентов**.
+* **Сжимает** энергию, облегчая устранение пространственной избыточности.
+* Являетсья **обратимым процессом**, например, вы можете вернуться к пикселям.
 
-> On 2 Feb 2017, Cintra, R. J. and Bayer, F. M have published their paper [DCT-like Transform for Image Compression
-Requires 14 Additions Only](https://arxiv.org/abs/1702.00817).
+> 2 февраля 2017 г. Синтра Р. Дж. И Байер Ф. М. опубликовали свою статью [ДСТ-подобное преобразование для сжатия изображений требует только 14 дополнений](https://arxiv.org/abs/1702.00817).
 
-Don't worry if you didn't understand the benefits from every bullet point, we'll try to make some experiments in order to see the real value from it.
+Не беспокойтесь, если вы не поняли преимуществ каждого пункта, мы попытаемся провести несколько экспериментов, чтобы понять порцесс подробнее.
 
-Let's take the following **block of pixels** (8x8):
+Давайте возьмем следующий **блок пикселей** (8x8):
 
-![pixel values matrix](/i/pixel_matrice.png "pixel values matrix")
+![матрица значений пикселей](/i/pixel_matrice.png "матрица значений пикселей")
 
-Which renders to the following block image (8x8):
+Который рендерится как изображение (8x8):
 
-![pixel values matrix](/i/gray_image.png "pixel values matrix")
+![матрица значений пикселей](/i/gray_image.png "матрица значений пикселей")
 
-When we **apply the DCT** over this block of pixels and we get the **block of coefficients** (8x8):
+Когда мы **применяем ДСТ** к этому блоку пикселей, мы получаем **блок коэффициентов** (8x8):
 
-![coefficients values](/i/dct_coefficient_values.png "coefficients values")
+![значения коэффициентов](/i/dct_coefficient_values.png "значения коэффициентов")
 
-And if we render this block of coefficients, we'll get this image:
+И если мы отрендерим этот блок коэффициентов, мы получим это изображение:
 
-![dct coefficients image](/i/dct_coefficient_image.png "dct coefficients image")
+![изображение коэффициентов dct](/i/dct_coefficient_image.png "изображение коэффициентов dct")
 
-As you can see it looks nothing like the original image, we might notice that the **first coefficient** is very different from all the others. This first coefficient is known as the DC coefficient which represents of **all the samples** in the input array, something **similar to an average**.
+Как видно, это не похоже на исходное изображение, и похоже что **первый коэффициент** очень отличается от всех остальных. Этот первый коэффициент известен как коэффициент DC, представляя себе **все выборки** во входном массиве, что-то **на подобие среднего числа**.
 
-This block of coefficients has an interesting property which is that it separates the high-frequency components from the low frequency.
+Этот блок коэффициентов обладает интересным свойством, заключающимся в том, что он отделяет высокочастотные компоненты от низкочастотных.
 
-![dct frequency coefficients property](/i/dctfrequ.jpg "dct frequency coefficients property")
+![свойство частотных коэффициентов ДСТ](/i/dctfrequ.jpg "свойство частотных коэффициентов ДСТ")
 
-In an image, **most of the energy** will be concentrated in the [**lower frequencies**](https://web.archive.org/web/20150129171151/https://www.iem.thm.de/telekom-labor/zinke/mk/mpeg2beg/whatisit.htm), so if we transform an image into its frequency components and **throw away the higher frequency coefficients**, we can **reduce the amount of data** needed to describe the image without sacrificing too much image quality.
+На изображении **большая часть энергии** будет сосредоточена на [**более низких частотах**](https://web.archive.org/web/20150129171151/https://www.iem.thm.de/telekom-labour/zinke/mk/mpeg2beg/whatisit.htm), поэтому если мы трансформируем изображение в его частотные компоненты и **отбросим более высокие частотные коэффициенты**, мы можем **уменьшить объем данных** необходимо описать изображение, не жертвуя качеством слижком сильно.
 
-> frequency means how fast a signal is changing
+> частота означает, насколько быстро меняется сигнал
 
-Let's try to apply the knowledge we acquired in the test by converting the original image to its frequency (block of coefficients) using DCT and then throwing away part of the least important coefficients.
+Давайте попробуем применить знания, которые мы получили в тесте, трансформоруя исходное изображение в его частоту (блок коэффициентов), используя ДСТ, а затем отбрасывая часть наименее важных коэффициентов.
 
-First, we convert it to its **frequency domain**.
+Сначала мы конвертируем его в **частотную область**.
 
-![coefficients values](/i/dct_coefficient_values.png "coefficients values")
+![значения коэффициентов](/i/dct_coefficient_values.png "значения коэффициентов")
 
-Next, we discard part (67%) of the coefficients, mostly the bottom right part of it.
+Далее мы отбрасываем часть (67%) коэффициентов, в основном нижнюю правую часть.
 
-![zeroed coefficients](/i/dct_coefficient_zeroed.png "zeroed coefficients")
+![Обнуленные коэффициенты](/i/dct_coefficient_zeroed.png "Обнуленные коэффициенты")
 
-Finally, we reconstruct the image from this discarded block of coefficients (remember, it needs to be reversible) and compare it to the original.
+Наконец, мы восстанавливаем изображение из этого отброшенного блока коэффициентов (помните, оно должно быть обратимым) и сравниваем его с оригиналом.
 
-![original vs quantized](/i/original_vs_quantized.png "original vs quantized")
+![оригинал напротив квантованного](/i/original_vs_quantized.png "оригинал напротив квантованного")
 
-As we can see it resembles the original image but it introduced lots of differences from the original, we **throw away 67.1875%** and we still were able to get at least something similar to the original. We could more intelligently discard the coefficients to have a better image quality but that's the next topic.
+Как видно, оно почоже на исходное изображение, но в нем есть много отличий от оригинала. Мы **выбрасили 67,1875%** и все же смогли получить хотя бы что-то похожее на оригинал. Мы могли бы более разумно отбросить коэффициенты, чтобы получить лучшее качество изображения, но это следующая тема.
 
-> **Each coefficient is formed using all the pixels**
+> **Каждый коэффициент формируется с использованием всех пикселей**
 >
-> It's important to note that each coefficient doesn't directly map to a single pixel but it's a weighted sum of all pixels. This amazing graph shows how the first and second coefficient is calculated, using weights which are unique for each index.
+> Важно отметить, что каждый коэффициент не отображается напрямую на один пиксель, а представляет собой взвешенную сумму всех пикселей. Этот удивительный график показывает, как рассчитывается первый и второй коэффициент с использованием весов, уникальных для каждого индекса.
 >
-> ![dct calculation](/i/applicat.jpg "dct calculation")
+>![расчет ДСТ](/i/Applicat.jpg "расчет ДСТ")
 >
-> Source: https://web.archive.org/web/20150129171151/https://www.iem.thm.de/telekom-labor/zinke/mk/mpeg2beg/whatisit.htm
+> Источник: https://web.archive.org/web/20150129171151/https://www.iem.thm.de/telekom-labor/zinke/mk/mpeg2beg/whatisit.htm
 >
-> You can also try to [visualize the DCT by looking at a simple image](/dct_better_explained.ipynb) formation over the DCT basis. For instance, here's the [A character being formed](https://en.wikipedia.org/wiki/Discrete_cosine_transform#Example_of_IDCT) using each coefficient weight.
+> Вы также можете попытаться [визуализировать ДСТ, взглянув на это изображение](/dct_better_explained.ipynb). Например, вот создается [символ "A"](https://en.wikipedia.org/wiki/Discrete_cosine_transform#Example_of_IDCT) с помощю каждого веса коэффициента.
 >
-> ![](https://upload.wikimedia.org/wikipedia/commons/5/5e/Idct-animation.gif )
+>! [] (https://upload.wikimedia.org/wikipedia/commons/5/5e/Idct-animation.gif)
 
 
 
 
 <br/>
 
-> ### Hands-on: throwing away different coefficients
-> You can play around with the [DCT transform](/uniform_quantization_experience.ipynb).
+> ### Практика: выбрасывание разных коэффициентов
+> Вы можете поигратся с [ДСТ трансформациями тут](/uniform_quantization_experience.ipynb).
 
-## 4th step - quantization
+## 4-й шаг - квантование
 
-When we throw away some of the coefficients, in the last step (transform), we kinda did some form of quantization. This step is where we chose to lose information (the **lossy part**) or in simple terms, we'll **quantize coefficients to achieve compression**.
+Когда мы выбрасываем коэффициенты, на последнем шаге (трансформация) мы делали некоторую форму квантования. На этом этапе мы решили потерять информацию или, проще говоря, мы **квантовали коэффициенты для достижения сжатия**.
 
-How can we quantize a block of coefficients? One simple method would be a uniform quantization, where we take a block, **divide it by a single value** (10) and round this value.
+Как мы можем квантовать блок коэффициентов? Одним простым методом было бы равномерное квантование, где мы берем блок, **делим его на одно значение** (10) и округляем это значение.
 
-![quantize](/i/quantize.png "quantize")
+![квантовать](/i/quantize.png "квантовать")
 
-How can we **reverse** (re-quantize) this block of coefficients? We can do that by **multiplying the same value** (10) we divide it first.
+Как мы можем **обратить** (переквантовать) этот блок коэффициентов? Мы можем **умножить одним и тем же значением** (10), которым мы разделили.
 
-![re-quantize](/i/re-quantize.png "re-quantize")
+![повторное квантование](/i/re-quantize.png "повторное квантование")
 
-This **approach isn't the best** because it doesn't take into account the importance of each coefficient, we could use a **matrix of quantizers** instead of a single value, this matrix can exploit the property of the DCT, quantizing most the bottom right and less the upper left, the [JPEG uses a similar approach](https://www.hdm-stuttgart.de/~maucher/Python/MMCodecs/html/jpegUpToQuant.html), you can check [source code to see this matrix](https://github.com/google/guetzli/blob/master/guetzli/jpeg_data.h#L40).
+Этот **подход не лучший**, потому что он не учитывает важность каждого коэффициента. Мы могли бы использовать **матрицу квантователей** вместо одного значения, эта матрица может использовать свойство ДСТ, квантовая больше нижнего правого и меньше верхнего левого, [JPEG использует аналогичный подход](https://www.hdm-stuttgart.de/~maucher/Python/MMCodecs/html/jpegUpToQuant.html). Вы можете проверить [исходный код, чтобы увидеть эту матрицу](https://github.com/google/guetzli/blob/master/guetzli/jpeg_data.h#L40).
 
-> ### Hands-on: quantization
-> You can play around with the [quantization](/dct_experiences.ipynb).
+> ### Практока: квантование
+> Вы можете поиграть с [квантованием] (/ dct_experiences.ipynb).
 
-## 5th step - entropy coding
+## 5-й шаг - энтропийное кодирование
 
-After we quantized the data (image blocks/slices/frames) we still can compress it in a lossless way. There are many ways (algorithms) to compress data. We're going to briefly experience some of them, for a deeper understanding you can read the amazing book [Understanding Compression: Data Compression for Modern Developers](https://www.amazon.com/Understanding-Compression-Data-Modern-Developers/dp/1491961538/).
+После того, как мы квантовали данные (блоки изображения / фрагменты / кадры), мы все еще можем сжимать их без потерь. Существует много способов (алгоритмов) сжатия данных. Мы собираемся кратко познакомиться с некоторыми из них, для более глубокого понимания вы можете прочитать удивительную книгу [Понимание сжатия: сжатие данных для современных разработчиков](https://www.amazon.com/Understanding-Compression-Data-Modern-Developers/dp/1491961538/).
 
-### VLC coding:
+### VLC кодирование:
 
-Let's suppose we have a stream of the symbols: **a**, **e**, **r** and **t** and their probability (from 0 to 1) is represented by this table.
+Предположим, у нас есть поток символов: **a**, **e**, **r** и **t**, и их вероятность (от 0 до 1) представлена ​​этой таблицей.
 
 |             | a   | e   | r    | t   |
 |-------------|-----|-----|------|-----|
