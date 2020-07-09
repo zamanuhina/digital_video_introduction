@@ -569,87 +569,87 @@ P-кадр пользуется фактом что почти всегда мо
 
 |             | a   | e   | r    | t   |
 |-------------|-----|-----|------|-----|
-| probability | 0.3 | 0.3 | 0.2 |  0.2 |
+| вероятность | 0.3 | 0.3 | 0.2 |  0.2 |
 
-We can assign unique binary codes (preferable small) to the most probable and bigger codes to the least probable ones.
+Мы можем присвоить уникальные коды (предпочтительно маленькие) наиболее вероятным, а более крупные коды наименее вероятным.
 
 |             | a   | e   | r    | t   |
 |-------------|-----|-----|------|-----|
-| probability | 0.3 | 0.3 | 0.2 | 0.2 |
-| binary code | 0 | 10 | 110 | 1110 |
+| вероятность | 0.3 | 0.3 | 0.2 | 0.2 |
+| код         | 0 | 10 | 110 | 1110 |
 
-Let's compress the stream **eat**, assuming we would spend 8 bits for each symbol, we would spend **24 bits** without any compression. But in case we replace each symbol for its code we can save space.
+Давайте сожмем поток **eat**, предполагая что мы потратим 8 битов на каждый символ, то в общей сложности мы тратим **24 бита** без какого-либо сжатия. Но в случае замены каждого символа на его код мы можем сэкономить место.
 
-The first step is to encode the symbol **e** which is `10` and the second symbol is **a** which is added (not in a mathematical way) `[10][0]` and finally the third symbol **t** which makes our final compressed bitstream to be `[10][0][1110]` or `1001110` which only requires **7 bits** (3.4 times less space than the original).
+Первый шаг заключается в кодировании символа **e**, который равен `10`, второй символ **а** добавляется что бы получить `[10][0]` и, наконец, третий символ **t**, который делает наш окончательный сжатый поток битов равным `[10][0][1110]` или `1001110`, которому нужно только **7 битов** (т.е 3.4 раза меньше места, чем оригинальный поток).
 
-Notice that each code must be a unique prefixed code [Huffman can help you to find these numbers](https://en.wikipedia.org/wiki/Huffman_coding). Though it has some issues there are [video codecs that still offers](https://en.wikipedia.org/wiki/Context-adaptive_variable-length_coding) this method and it's the  algorithm for many applications which requires compression.
+Обратите внимание, что каждый код должен иметь уникальный префикс код [Хаффман может помочь вам найти эти номера](https://en.wikipedia.org/wiki/Huffman_coding). Хотя у этого метода есть проблемы, есть [видеокодеки, которые все еще предлагают](https://en.wikipedia.org/wiki/Context-adaptive_variable-length_coding) его, и это алгоритм для многих приложений, который требует сжатия.
 
-Both encoder and decoder **must know** the symbol table with its code, therefore, you need to send the table too.
+Кодер и декодер **должны знать** таблицу символов с ее кодом, поэтому вам также необходимо отправлять таблицу.
 
-### Arithmetic coding:
+### Арифметическое кодирование:
 
-Let's suppose we have a stream of the symbols: **a**, **e**, **r**, **s** and **t** and their probability is represented by this table.
+Давай скажим что у нас есть поток символов: **a**, **e**, **r**, **s**, **t** и их вероятность показанна на таблице:
 
 |             | a   | e   | r    | s    | t   |
 |-------------|-----|-----|------|------|-----|
-| probability | 0.3 | 0.3 | 0.15 | 0.05 | 0.2 |
+| вероятность | 0.3 | 0.3 | 0.15 | 0.05 | 0.2 |
 
-With this table in mind, we can build ranges containing all the possible symbols sorted by the most frequents.
+Зная об этой таблице, мы можем построить области со всеми возможными сомволами, отсортированные теми которые появляются чаще всяго. 
 
-![initial arithmetic range](/i/range.png "initial arithmetic range")
+![начальный арифметический диапазон](/i/range.png "начальный арифметический диапазон")
 
-Now let's encode the stream **eat**, we pick the first symbol **e** which is located within the subrange **0.3 to 0.6** (but not included) and we take this subrange and split it again using the same proportions used before but within this new range.
+Теперь давайте закодируем поток **eat**, мы выбираем первый символ **a**, который находится в новом поддиапазоне **0.3 до 0.6** (но не включен), и мы берем этот поддиапазон и снова разделяем его, используя те же пропорции, которые использовались ранее, но в этом новом диапазоне.
 
-![second sub range](/i/second_subrange.png "second sub range")
+![второй поддиапазон](/i/second_subrange.png "второй поддиапазон")
 
-Let's continue to encode our stream **eat**, now we take the second symbol **a** which is within the new subrange **0.3 to 0.39** and then we take our last symbol **t** and we do the same process again and we get the last subrange **0.354 to 0.372**.
+Давайте продолжим кодировать наш поток **eat**, мы выберем второй символ **a**, который находится в новом поддиапазоне **0.3 до 0.39**, а затем мы берем наш последний символ **t**, повторяя процесс что бы получить последний поддиапазон **0.354 до 0.372**.
 
-![final arithmetic range](/i/arithimetic_range.png "final arithmetic range")
+![окончательный арифметический диапазон](/i/arithimetic_range.png "конечный арифметический диапазон")
 
-We just need to pick a number within the last subrange **0.354 to 0.372**, let's choose **0.36** but we could choose any number within this subrange. With **only** this number we'll be able to recover our original stream **eat**. If you think about it, it's like if we were drawing a line within ranges of ranges to encode our stream.
+Нам просто нужно выбрать число в последнем поддиапазоне **0.354 до 0.372**, давайте выберем **0.36**, но мы можем выбрать любое число в этом поддиапазоне. С **только** этим номером мы сможем восстановить наш оригинальный поток **eat**. Если подумать об этом, мы как бы нарисовали линию в пределах диапазонов для кодирования нашего потока.
 
-![final range traverse](/i/range_show.png "final range traverse")
+![окончательный обход диапазона](/i/range_show.png "окончательный обход диапазона")
 
-The **reverse process** (A.K.A. decoding) is equally easy, with our number **0.36** and our original range we can run the same process but now using this number to reveal the stream encoded behind this number.
+**Обратный процесс** (т.е. декодирование) одинаково прост, с нашим числом **0,36** и нашим исходным диапазоном мы можем запустить тот же процесс, но теперь используя это число, чтобы показать поток, закодированный за этим номером.
 
-With the first range, we notice that our number fits at the slice, therefore, it's our first symbol, now we split this subrange again, doing the same process as before, and we'll notice that **0.36** fits the symbol **a** and after we repeat the process we came to the last symbol **t** (forming our original encoded stream *eat*).
+С первым диапазоном мы заметили что наше число соответствует срезу, поэтому это наш первый символ, теперь мы снова разбиваем этот поддиапазон, выполняя тот же процесс что и раньше, и мы можем заметить, что **0.36** соответствует символу **a** и после того, как мы повторим процесс, мы подходим к последнему символу **t** (формируя наш оригинальный кодированный поток *eat*).
 
-Both encoder and decoder **must know** the symbol probability table, therefore you need to send the table.
+Кодер и декодер **должны знать** таблицу вероятностей символов, поэтому вам необходимо отправлять таблицу.
 
-Pretty neat, isn't it? People are damn smart to come up with a such solution, some [video codecs use](https://en.wikipedia.org/wiki/Context-adaptive_binary_arithmetic_coding) this technique (or at least offer it as an option).
+Не плохо, правда? Люди чертовски умны, чтобы придумать такое решение, некоторые [видеокодеки используют](https://en.wikipedia.org/wiki/Context-adaptive_binary_arithmetic_coding) эту технику (или, по крайней мере, предлагают ее в качестве опции).
 
-The idea is to lossless compress the quantized bitstream, for sure this article is missing tons of details, reasons, trade-offs and etc. But [you should learn more](https://www.amazon.com/Understanding-Compression-Data-Modern-Developers/dp/1491961538/) as a developer. Newer codecs are trying to use different [entropy coding algorithms like ANS.](https://en.wikipedia.org/wiki/Asymmetric_Numeral_Systems)
+Идея состоит в том, чтобы сжать без потерь квантованный поток битов, наверняка в этой статье отсутствуют тонны деталей, причин, компромиссов и т. Д. Но [вы должны узнать больше](https://www.amazon.com/Understanding-Compression-Data-Modern-Developers/dp/1491961538/) в качестве разработчика. Более новые кодеки пытаются использовать различные [алгоритмы энтропийного кодирования, наподобие ANS.](https://en.wikipedia.org/wiki/Asymmetric_Numeral_Systems)
 
-> ### Hands-on: CABAC vs CAVLC
-> You can [generate two streams, one with CABAC and other with CAVLC](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#cabac-vs-cavlc) and **compare the time** it took to generate each of them as well as **the final size**.
+> ### Практика: CABAC vs CAVLC
+> Вы можете [создать два потока, один с CABAC and другой с CAVLC](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#cabac-vs-cavlc) and **сравнить время** занятое для их создание, а так же **конечный размер файла**.
 
-## 6th step - bitstream format
+## 6-й шаг - формат битового потока
 
-After we did all these steps we need to **pack the compressed frames and context to these steps**. We need to explicitly inform to the decoder about **the decisions taken by the encoder**, such as bit depth, color space, resolution, predictions info (motion vectors, intra prediction direction), profile, level, frame rate, frame type, frame number and much more.
+После того, как мы выполнили все эти шаги, нам нужно **упаковать сжатые кадры и контекст к этим шагам**. Нам необходимо сообщить декодеру **о решениях, принятых кодером**, например битовая глубина, цветовое пространство, разрешение, информация о предсказаниях (векторы движения, направление внутреннего предсказания), профиль, уровень, частота кадров, тип кадра, номер кадра и многое другое.
 
-We're going to study, superficially, the H.264 bitstream. Our first step is to [generate a minimal  H.264 <sup>*</sup> bitstream](/encoding_pratical_examples.md#generate-a-single-frame-h264-bitstream), we can do that using our own repository and [ffmpeg](http://ffmpeg.org/).
+Мы поверхностно изучим поток битов H.264. Наш первый шаг - [создать минимальный битовый поток H.264 <sup>*</sup>](/encoding_pratical_examples.md#generate-a-single-frame-h264-bitstream), что мы можем сделать это с помощью нашего собственного репозитория и [ffmpeg](http://ffmpeg.org/).
 
 ```
 ./s/ffmpeg -i /files/i/minimal.png -pix_fmt yuv420p /files/v/minimal_yuv420.h264
 ```
 
-> <sup>*</sup> ffmpeg adds, by default, all the encoding parameter as a **SEI NAL**, soon we'll define what is a NAL.
+> <sup>*</sup> ffmpeg по умолчанию добавляет все параметры кодирования в виде **SEI NAL** - вскоре мы определим, что такое NAL.
 
-This command will generate a raw h264 bitstream with a **single frame**, 64x64, with color space yuv420 and using the following image as the frame.
+Эта команда сгенерирует необработанный поток битов h264 с **одиночным кадром**, 64x64, с цветовым пространством yuv420 и с использованием следующего изображения в качестве кадра.
 
-> ![used frame to generate minimal h264 bitstream](/i/minimal.png "used frame to generate minimal h264 bitstream")
+>![используемый кадр для генерации минимального битового потока h264](/i/minimal.png "используемый кадр для генерации минимального битового потока h264")
 
-### H.264 bitstream
+### H.264 битовый поток
 
-The AVC (H.264) standard defines that the information will be sent in **macro frames** (in the network sense), called **[NAL](https://en.wikipedia.org/wiki/Network_Abstraction_Layer)** (Network Abstraction Layer). The main goal of the NAL is the provision of a "network-friendly" video representation, this standard must work on TVs (stream based), the Internet (packet based) among others.
+Стандарт AVC (H.264) определяет, что информация будет отправляться в **макрокадрах** (в смысле сети), называемых **[NAL](https://en.wikipedia.org/wiki/Network_Abstraction_Layer)** (Сетевой Уровень Aбстракции). Основной целью NAL является обеспечение "дружественного к сети" представления видео, этот стандарт должен работать на телевизорах (на основе потоков), в Интернете (на основе пакетов) и т.д.
 
-![NAL units H.264](/i/nal_units.png "NAL units H.264")
+![Блоки NAL H.264](/i/nal_units.png "блоки NAL H.264")
 
-There is a **[synchronization marker](https://en.wikipedia.org/wiki/Frame_synchronization)** to define the boundaries of the NAL's units. Each synchronization marker holds a value of `0x00 0x00 0x01` except to the very first one which is `0x00 0x00 0x00 0x01`. If we run the **hexdump** on the generated h264 bitstream, we can identify at least three NALs in the beginning of the file.
+Существует **[маркер синхронизации](https://en.wikipedia.org/wiki/Frame_synchronization)** для определения границ единиц NAL. Каждый маркер синхронизации содержит значение `0x00 0x00 0x01`, за исключением самого первого, который является` 0x00 0x00 0x00 0x01`. Если мы запустим **hexdump** в сгенерированном потоке битов h264, мы сможем идентифицировать как минимум три NAL в начале файла.
 
-![synchronization marker on NAL units](/i/minimal_yuv420_hex.png "synchronization marker on NAL units")
+![маркер синхронизации на блоках NAL](/iminimal_yuv420_hex.png "маркер синхронизации на блоках NAL")
 
-As we said before, the decoder needs to know not only the picture data but also the details of the video, frame, colors, used parameters, and others. The **first byte** of each NAL defines its category and **type**.
+Как мы уже говорили, декодеру надо знать не только данные изображения, но также детали видео, фрейма, цвета, используемые параметры и другие. **Первый байт** каждого NAL определяет его категорию и **тип**.
 
 | NAL type id  | Description  |
 |---  |---|
@@ -667,47 +667,47 @@ As we said before, the decoder needs to know not only the picture data but also 
 | 11 |  End of stream |
 | ... |  ... |
 
-Usually, the first NAL of a bitstream is a **SPS**, this type of NAL is responsible for informing the general encoding variables like **profile**, **level**, **resolution** and others.
+Обычно первый NAL битового потока представляет собой **SPS**, этот тип NAL отвечает за информирование общих переменных кодирования, таких как **профиль**, **уровень**, **разрешение** и другие.
 
-If we skip the first synchronization marker we can decode the **first byte** to know what **type of NAL** is the first one.
+Если мы пропустим первый маркер синхронизации, мы можем декодировать **первый байт**, чтобы узнать, какой **тип NAL** является первым.
 
-For instance the first byte after the synchronization marker is `01100111`, where the first bit (`0`) is to the field **forbidden_zero_bit**, the next 2 bits (`11`) tell us the field **nal_ref_idc** which indicates whether this NAL is a reference field or not and the rest 5 bits (`00111`) inform us the field **nal_unit_type**, in this case, it's a **SPS** (7) NAL unit.
+Например, первый байт после маркера синхронизации равен `01100111`, где первый бит (`0`) находится в поле **forbidden_zero_bit**, следующие 2 бита (`11`) сообщают нам поле **nal_ref_idc** который указывает если этот является NAL опорным полем или нет, а остальные 5 битов (`00111`) информируют нас о поле **nal_unit_type**, в данном случае это **SPS** (7) единица NAL.
 
-The second byte (`binary=01100100, hex=0x64, dec=100`) of an SPS NAL is the field **profile_idc** which shows the profile that the encoder has used, in this case, we used  the **[constrained high-profile](https://en.wikipedia.org/wiki/H.264/MPEG-4_AVC#Profiles)**, it's a high profile without the support of B (bi-predictive) slices.
+Второй байт (`binary = 01100100, hex = 0x64, dec = 100`) SPS NAL - это поле **profile_idc**, которое показывает профиль, который использовал кодировщик, в этом случае мы использовали **[ограниченный высокий профиль](https://en.wikipedia.org/wiki/H.264/MPEG-4_AVC#Profiles)**, это высокий профиль без поддержки B (двунаправленных) срезов.
 
-![SPS binary view](/i/minimal_yuv420_bin.png "SPS binary view")
+![Двоичное представление SPS](/i/minimal_yuv420_bin.png "двоичное представление SPS")
 
-When we read the H.264 bitstream spec for an SPS NAL we'll find many values for the **parameter name**, **category** and a **description**, for instance, let's look at `pic_width_in_mbs_minus_1` and `pic_height_in_map_units_minus_1` fields.
+Когда мы читаем спецификацию потока битов H.264 для SPS NAL, мы найдем много значений, например,  **parameter name**, **category** и **description**, давайте посмотрим на `pic_width_in_mbs_minus_1` и поля `pic_height_in_map_units_minus_1`.
 
 | Parameter name  | Category  |  Description  |
 |---  |---|---|
 | pic_width_in_mbs_minus_1 |  0 | ue(v) |
 | pic_height_in_map_units_minus_1 |  0 | ue(v) |
 
-> **ue(v)**: unsigned integer [Exp-Golomb-coded](https://pythonhosted.org/bitstring/exp-golomb.html)
+> **ue(v)**: целое число без знака [Exp-Golomb-кодированный](https://pythonhosted.org/bitstring/exp-golomb.html)
 
-If we do some math with the value of these fields we will end up with the **resolution**. We can represent a `1920 x 1080` using a `pic_width_in_mbs_minus_1` with the value of `119 ( (119 + 1) * macroblock_size = 120 * 16 = 1920) `, again saving space, instead of encode `1920` we did it with `119`.
+Если мы немного посчитаем значения этих полей, мы получим **разрешение**. Мы можем представить `1920 x 1080`, используя `pic_width_in_mbs_minus_1` со значением `119 ((119 + 1) * macroblock_size = 120 * 16 = 1920)`, опять же экономя место, вместо того, чтобы кодировать `1920`, как мы это сделали с `119`.
 
-If we continue to examine our created video with a binary view (ex: `xxd -b -c 11 v/minimal_yuv420.h264`), we can skip to the last NAL which is the frame itself.
+Если мы продолжим проверять наше созданное видео в двоичном виде (например: `xxd -b -c 11 v/minimal_yuv420.h264`), мы можем перейти к последнему NAL, который является самим кадром.
 
-![h264 idr slice header](/i/slice_nal_idr_bin.png "h264 idr slice header")
+![h264 idr заголовок слайса](/i/slice_nal_idr_bin.png "h264 idr заголовок слайса")
 
-We can see its first 6 bytes values: `01100101 10001000 10000100 00000000 00100001 11111111`. As we already know the first byte tell us about what type of NAL it is, in this case, (`00101`) it's an **IDR Slice (5)** and we can further inspect it:
+Мы можем видеть его первые 6 байтовых значений: `01100101 10001000 10000100 00000000 00100001 11111111`. Поскольку мы уже знаем, что первый байт говорит нам о том, что это за тип NAL, в данном случае (`00101`) это **IDR Slice (5)**, и мы можем проверить его:
 
-![h264 slice header spec](/i/slice_header.png "h264 slice header spec")
+![Спецификация заголовка слайса h264](/i/slice_header.png "Спецификация заголовка слайса h264")
 
-Using the spec info we can decode what type of slice (**slice_type**), the frame number (**frame_num**) among others important fields.
+Используя информацию спецификации, мы можем декодировать, какой тип слайса (**slice_type**), номер кадра (**frame_num**) среди других важных полей.
 
-In order to get the values of some fields (`ue(v), me(v), se(v) or te(v)`) we need to decode it using a special decoder called [Exponential-Golomb](https://pythonhosted.org/bitstring/exp-golomb.html), this method is **very efficient to encode variable values**, mostly when there are many default values.
+Чтобы получить значения некоторых полей (`ue (v), me (v), se (v) или te (v)`)), нам нужно декодировать его, используя специальный декодер под названием [Exponential-Golomb](https://pythonhosted.org/bitstring/exp-golomb.html), этот метод **очень эффективен для кодирования значений переменных**, главным образом, когда существует много значений по умолчанию.
 
-> The values of **slice_type** and **frame_num** of this video are 7 (I slice) and 0 (the first frame).
+> Значения **slice_type** и **frame_num** этого видео равны 7 (I срез) и 0 (первый кадр).
 
-We can see the **bitstream as a protocol** and if you want or need to learn more about this bitstream please refer to the [ITU H.264 spec.]( http://www.itu.int/rec/T-REC-H.264-201610-I) Here's a macro diagram which shows where the picture data (compressed YUV) resides.
+Мы можем видеть **поток битов как протокол**, и если вы хотите или вам надо узнать больше об этом потоке битов, обратитесь к [спецификации МСЭ H.264](http://www.itu.int/rec/T-REC-H.264-201610-I) Вот макросхема, которая показывает, где находятся данные изображения (сжатые YUV).
 
-![h264 bitstream macro diagram](/i/h264_bitstream_macro_diagram.png "h264 bitstream macro diagram")
+![Макросхема битового потока h264](/ih264_bitstream_macro_diagram.png "Макросхема битового потока h264")
 
-We can explore others bitstreams like the [VP9 bitstream](https://storage.googleapis.com/downloads.webmproject.org/docs/vp9/vp9-bitstream-specification-v0.6-20160331-draft.pdf), [H.265 (HEVC)](http://handle.itu.int/11.1002/1000/11885-en?locatt=format:pdf) or even our **new best friend** [**AV1** bitstream](https://medium.com/@mbebenita/av1-bitstream-analyzer-d25f1c27072b#.d5a89oxz8
-), [do they all look similar? No](http://www.gpac-licensing.com/2016/07/12/vp9-av1-bitstream-format/), but once you learned one you can easily get the others.
+Мы можем исследовать другие битовые потоки, такие как [битовый поток VP9](https://storage.googleapis.com/downloads.webmproject.org/docs/vp9/vp9-bitstream-specification-v0.6-20160331-draft.pdf), [H.265 (HEVC)](http://handle.itu.int/11.1002/1000/11885-en?locatt=format:pdf) или даже наш **новый лучший друг** [**AV1** поток битов](https://medium.com/@mbebenita/av1-bitstream-analyzer-d25f1c27072b#.d5a89oxz8
+), [они все похожи? Нет](http://www.gpac-licensing.com/2016/07/12/vp9-av1-bitstream-format/), но как только вы выучите один, вы легко сможете понять другие.
 
 > ### Hands-on: Inspect the H.264 bitstream
 > We can [generate a single frame video](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#generate-a-single-frame-video) and use  [mediainfo](https://en.wikipedia.org/wiki/MediaInfo) to inspect its H.264 bitstream. In fact, you can even see the [source code that parses h264 (AVC)](https://github.com/MediaArea/MediaInfoLib/blob/master/Source/MediaInfo/Video/File_Avc.cpp) bitstream.
