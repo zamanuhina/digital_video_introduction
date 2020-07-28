@@ -72,7 +72,7 @@ cd digital_video_introduction
     + [Практика: CABAC vs CAVLC](#практика-cabac-vs-cavlc)
   * [6-й шаг - формат битового потока](#6-й-шаг---формат-битового-потока)
     + [H.264 битовый поток](#h264-битовый-поток)
-    + [Практика: Проверйа битовога потока H.264](#практика-проверйа-битовога-потока-h264)
+    + [Практика: Проверка битовога потока H.264](#практика-проверйа-битовога-потока-h264)
   * [Обзор](#oбзор)
   * [Как H.265 обеспечивает лучшую степень сжатия чем H.264?](#как-h265-обеспечивает-лучшую-степень-сжатия-чем-h264)
 - [Онлайн трансляция](#онлайн-трансляция)
@@ -198,7 +198,7 @@ cd digital_video_introduction
 
 ![пример ycbcr](/i/ycbcr.png "пример ycbcr")
 
-### Converting between YCbCr and RGB
+### Преобразование между YCbCr и RGB
 
 Некоторые из вас может спрашивают, как можно показывать **все цвета без зеленого**?
 
@@ -709,120 +709,120 @@ P-кадр пользуется фактом что почти всегда мо
 Мы можем исследовать другие битовые потоки, такие как [битовый поток VP9](https://storage.googleapis.com/downloads.webmproject.org/docs/vp9/vp9-bitstream-specification-v0.6-20160331-draft.pdf), [H.265 (HEVC)](http://handle.itu.int/11.1002/1000/11885-en?locatt=format:pdf) или даже наш **новый лучший друг** [**AV1** поток битов](https://medium.com/@mbebenita/av1-bitstream-analyzer-d25f1c27072b#.d5a89oxz8
 ), [они все похожи? Нет](http://www.gpac-licensing.com/2016/07/12/vp9-av1-bitstream-format/), но как только вы выучите один, вы легко сможете понять другие.
 
-> ### Hands-on: Inspect the H.264 bitstream
-> We can [generate a single frame video](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#generate-a-single-frame-video) and use  [mediainfo](https://en.wikipedia.org/wiki/MediaInfo) to inspect its H.264 bitstream. In fact, you can even see the [source code that parses h264 (AVC)](https://github.com/MediaArea/MediaInfoLib/blob/master/Source/MediaInfo/Video/File_Avc.cpp) bitstream.
+> ### Практика: Проверка битовога потока H.264
+> Мы можем [создать однокадровое видео](https://github.com/leandromoreira/introduction_video_technology/blob/master/encoding_pratical_examples.md#generate-a-single-frame-video) и использовать [mediainfo](https://en.wikipedia.org/wiki/MediaInfo) для проверки потока битов H.264. Вы даже можете увидеть [исходный код, который анализирует битовый поток h264 (AVC)](https://github.com/MediaArea/MediaInfoLib/blob/master/Source/MediaInfo/Video/File_Avc.cpp).
 >
-> ![mediainfo details h264 bitstream](/i/mediainfo_details_1.png "mediainfo details h264 bitstream")
+> ![mediainfo показывает поток битов h264](/i/mediainfo_details_1.png "mediainfo показывает поток битов h264")
 >
-> We can also use the [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer) which is paid but there is a free trial version which limits you to only the first 10 frames but that's okay for learning purposes.
+> Мы также можем использовать [Intel Video Pro Analyzer](https://software.intel.com/en-us/intel-video-pro-analyzer), который платный, хотя существует бесплатная пробная версия, которая ограничивает вас только первые 10 кадров (которых для учебных целей должно быть достаточно).
 >
-> ![intel video pro analyzer details h264 bitstream](/i/intel-video-pro-analyzer.png "intel video pro analyzer details h264 bitstream")
+> ![intel video pro analyzer показывает поток битов h264](/i/intel-video-pro-analyzer.png "intel video pro analyzer показывает поток битов h264")
 
-## Review
+## Обзор
 
-We'll notice that many of the **modern codecs uses this same model we learned**. In fact, let's look at the Thor video codec block diagram, it contains all the steps we studied. The idea is that you now should be able to at least understand better the innovations and papers for the area.
+Мы заметим, что многие из **современных кодеков используют ту же модель, которую мы изучили**. Можно посмотреть на блок-схему видеокодека Thor и увидеть что она содержит все шаги, которые мы изучали. Идея состоит в том, что теперь вы в состоянии лучше понять инновации и документы в этой области.
 
 ![thor_codec_block_diagram](/i/thor_codec_block_diagram.png "thor_codec_block_diagram")
 
-Previously we had calculated that we needed [139GB of storage to keep a video file with one hour at 720p resolution and 30fps](#chroma-subsampling) if we use the techniques we learned here, like **inter and intra prediction, transform, quantization, entropy coding and other** we can achieve, assuming we are spending **0.031 bit per pixel**, the same perceivable quality video **requiring only 367.82MB vs 139GB** of store.
+Ранее мы рассчитывали, что нам потребуется [139 ГБ дискового пространства для хранения видеофайла одного часа в длинне при разрешении 720p и 30 к/с](#цветовая-субдискретизация). С помощю методов которые описаны здесь, такие как **меж и внутреннее предсказание, трансформации, квантование, энтропийное кодирование и другие**, то же видео воспринимаемого качества можно сжать до **только 367.82 МБ**.
 
-> We choose to use **0.031 bit per pixel** based on the example video provided here.
+> Мы решили использовать **0.031 бит на пиксель** на основе примера видео, представленного здесь.
 
-## How does H.265 achieve a better compression ratio than H.264?
+## Как H.265 достигает лучшей степени сжатия, чем H.264?
 
-Now that we know more about how codecs work, then it is easy to understand how new codecs are able to deliver higher resolutions with fewer bits.
+Зная больше о том, как работают кодеки, легко понять как новые кодеки способны обеспечивать более высокое разрешение с меньшим количеством битов.
 
-We will compare AVC and HEVC, let's keep in mind that it is almost always a trade-off between more CPU cycles (complexity) and compression rate.
+Мы сравним AVC и HEVC, помня что это почти всегда компромисс между большим количеством циклов ЦП (сложность) и степенью сжатия.
 
-HEVC has bigger and more **partitions** (and **sub-partitions**) options than AVC, more **intra predictions directions**, **improved entropy coding** and more, all these improvements made H.265 capable to compress 50% more than H.264.
+HEVC имеет больше каличество **разделов** (и **подразделов**), которые так же и больше в размере чем AVC, больше **направлений внутреннего предсказания**, **улучшенное энтропийное кодирование** и более, все эти улучшения дали H.265 способность сжимать на 50% больше, чем H.264.
 
-![h264 vs h265](/i/avc_vs_hevc.png "H.264 vs H.265")
+![h264 против h265](/i/avc_vs_hevc.png "H.264 против H.265")
 
-# Online streaming
-## General architecture
+# Онлайн трансляция
+## Общая архитектура
 
-![general architecture](/i/general_architecture.png "general architecture")
-
-[TODO]
-
-## Progressive download and adaptive streaming
-
-![progressive download](/i/progressive_download.png "progressive download")
-
-![adaptive streaming](/i/adaptive_streaming.png "adaptive streaming")
+! [общая архитектура](/i/general_architecture.png "общая архитектура")
 
 [TODO]
 
-## Content protection
+## Прогрессивная загрузка и адаптивная потоковая передача
 
-We can use **a simple token system** to protect the content. The user without a token tries to request a video and the CDN forbids her or him while a user with a valid token can play the content, it works pretty similarly to most of the web authentication systems.
+![Прогрессивная загрузка](/i/progressive_download.png "Прогрессивная загрузка")
 
-![token protection](/i/token_protection.png "token_protection")
+![Адаптивный поток](/i/adaptive_streaming.png "Адаптивный поток")
 
-The sole use of this token system still allows a user to download a video and distribute it. Then the **DRM (digital rights management)** systems can be used to try to avoid this.
+[TODO]
+
+## Защита контента
+
+Мы можем использовать **простую систему токенов** для защиты контента. Запрос видео без токена будет запрещщен CDN-ом, в то время как пользователь с действительным токеном может воспроизводить контент. Он работает почти так же, как и большинство систем веб-аутентификации.
+
+![защита токена](/i/token_protection.png "token_protection")
+
+Использую эту систему токенов позволяет пользователю загружать видео и распространять его. Затем можно использовать систему **DRM (управление цифровыми правами)**, чтобы избежать этого.
 
 ![drm](/i/drm.png "drm")
 
-In real life production systems, people often use both techniques to provide authorization and authentication.
+В реальных производственных системах люди часто используют оба метода для обеспечения авторизации и аутентификации.
 
 ### DRM
-#### Main systems
+#### Основные системы
 
 * FPS - [**FairPlay Streaming**](https://developer.apple.com/streaming/fps/)
 * PR - [**PlayReady**](https://www.microsoft.com/playready/)
 * WV - [**Widevine**](http://www.widevine.com/)
 
 
-#### What?
+#### Какой?
 
-DRM means Digital rights management, it's a way **to provide copyright protection for digital media**, for instance, digital video and audio. Although it's used in many places [it's not universally accepted](https://en.wikipedia.org/wiki/Digital_rights_management#DRM-free_works).
+DRM зто система цифровых прав, это способ **обеспечить защиту авторских прав на цифровых материалов** - например, цифровое видео и аудио. Хотя он используется во многих местах [он не является общепринятым](https://en.wikipedia.org/wiki/Digital_rights_management#DRM-free_works).
 
-#### Why?
+#### Зачем?
 
-Content creator (mostly studios) want to protect its intelectual property against copy to prevent unauthorized redistribution of digital media.
+Создатель контента (в основном, студии) хотят защитить свою интеллектуальную собственность от копирования, чтобы предотвратить несанкционированное распространение цифрового контента.
 
-#### How?
+#### Как?
 
-We're going to describe an abstract and generic form of DRM in a very simplified way.
+Мы собираемся описать абстрактную и общую форму DRM в очень упрощенном виде.
 
-Given a **content C1** (i.e. an hls or dash video streaming), with a **player P1** (i.e. shaka-clappr, exo-player or ios) in a **device D1** (i.e. a smartphone, TV, tablet or desktop/notebook) using a **DRM system DRM1** (widevine, playready or FairPlay).
+Учитывая **контент C1** (т.е. потоковое видео hls или dash), с **проигрывателем P1** (т.е. shaka-clappr, exo-player или ios) в **устройстве D1** (т.е. смартфоне , Телевизор, планшет или настольный компьютер / ноутбук) с использованием **DRM системы DRM1** (widevine, playready или FairPlay).
 
-The content C1 is encrypted with a **symmetric-key K1** from the system DRM1, generating the **encrypted content C'1**.
+Контент C1 зашифрован с помощью **симметричного ключа K1** от системы DRM1, генерируя **зашифрованный контент C'1**.
 
 ![drm general flow](/i/drm_general_flow.jpeg "drm general flow")
 
-The player P1, of a device D1, has two keys (asymmetric), a **private key PRK1** (this key is protected<sup>1</sup> and only known by **D1**) and a **public key PUK1**.
+Проигрыватель P1 устройства D1 имеет два ключа (асимметричные): **закрытый ключ PRK1** (этот ключ защищен <sup>1</sup> и известен только **D1**) и **открытый ключ PUK1**.
 
-> **<sup>1</sup>protected**: this protection can be **via hardware**, for instance, this key can be stored inside a special (read-only) chip that works like [a black-box](https://en.wikipedia.org/wiki/Black_box) to provide decryption, or **by software** (less safe), the DRM system provides means to know which type of protection a given device has.
+> ** <sup> 1 </ sup> защищен **: эта защита может быть ** с помощью аппаратного обеспечения **, например, этот ключ может храниться в специальном (только для чтения) чипе, который работает как [черный box] (https://en.wikipedia.org/wiki/Black_box), чтобы обеспечить расшифровку, или ** с помощью программного обеспечения ** (менее безопасно), система DRM предоставляет средства, чтобы узнать, какой тип защиты имеет данное устройство.
 
 
-When the **player P1 wants to play** the **content C'1**, it needs to deal with the **DRM system DRM1**, giving its public key **PUK1**. The DRM system DRM1 returns the **key K1 encrypted** with the client''s public key **PUK1**. In theory, this response is something that **only D1 is capable of decrypting**.
+Когда ** игрок P1 хочет воспроизвести ** контент ** C'1 **, он должен иметь дело с ** DRM-системой DRM1 **, предоставив свой открытый ключ ** PUK1 **. DRM-система DRM1 возвращает ** ключ K1 в зашифрованном виде ** с открытым ключом клиента ** PUK1 **. Теоретически, этот ответ - это то, что ** только D1 способен расшифровать **.
 
-`K1P1D1 = enc(K1, PUK1)`
+`K1P1D1 = enc (K1, PUK1)`
 
-**P1** uses its DRM local system (it could be a [SOC](https://en.wikipedia.org/wiki/System_on_a_chip), a specialized hardware or software), this system is **able to decrypt** the content using its private key PRK1, it can decrypt **the symmetric-key K1 from the K1P1D1** and **play C'1**. At best case, the keys are not exposed through RAM.
+**P1** использует свою локальную систему DRM (это может быть [SOC](https://en.wikipedia.org/wiki/System_on_a_chip), специализированное аппаратное или программное обеспечение), эта система **может дешифровать** контент, и используя свой закрытый ключ PRK1, может расшифровать **симметричный ключ K1 от K1P1D1** и **воспроизвести C'1**. В лучшем случае ключи не выставляются через ОЗУ.
 
- ```
- K1 = dec(K1P1D1, PRK1)
+ ``,
+ K1 = dec (K1P1D1, PRK1)
 
- P1.play(dec(C'1, K1))
- ```
+ P1.play (dec (C'1, K1))
+ ``,
 
-![drm decoder flow](/i/drm_decoder_flow.jpeg "drm decoder flow")
+![поток drm декодера](/i/drm_decoder_flow.jpeg "поток drm декодера")
 
-# How to use jupyter
+# Как использовать Jupyter
 
-Make sure you have **docker installed** and just run `./s/start_jupyter.sh` and follow the instructions on the terminal.
+Убедитесь, что у вас установлен **docker** и просто запустите `./s/ start_jupyter.sh` и следуйте инструкциям на терминале.
 
-# Conferences
+# Конференции
 
-* [DEMUXED](https://demuxed.com/) - you can [check the last 2 events presentations.](https://www.youtube.com/channel/UCIc_DkRxo9UgUSTvWVNCmpA).
+* [DEMUXED](https://demuxed.com/) - вы можете [проверить последние 2 презентации.](Https://www.youtube.com/channel/UCIc_DkRxo9UgUSTvWVNCmpA).
 
-# References
+# Ссылки
 
-The richest content is here, it's where all the info we saw in this text was extracted, based or inspired by. You can deepen your knowledge with these amazing links, books, videos and etc.
+Здесь самый богатый контент, вся информация которую мы видели в этом тексте, была извлечена, основана или вдохновлена. Вы можете углубить свои знания с помощью этих удивительных ссылок, книг, видео и т. д.
 
-Online Courses and Tutorials:
+Онлайн курсы и учебные пособия:
 
 * https://www.coursera.org/learn/digital/
 * https://people.xiph.org/~tterribe/pubs/lca2012/auckland/intro_to_video1.pdf
